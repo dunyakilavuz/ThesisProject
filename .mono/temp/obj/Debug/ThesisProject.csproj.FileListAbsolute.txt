@@ -1,0 +1,5 @@
+E:\Workspace\ThesisProject\.mono\temp\bin\Debug\ThesisProject.dll
+E:\Workspace\ThesisProject\.mono\temp\bin\Debug\ThesisProject.pdb
+E:\Workspace\ThesisProject\.mono\temp\obj\Debug\ThesisProject.csprojAssemblyReference.cache
+E:\Workspace\ThesisProject\.mono\temp\obj\Debug\ThesisProject.dll
+E:\Workspace\ThesisProject\.mono\temp\obj\Debug\ThesisProject.pdb

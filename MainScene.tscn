@@ -1,0 +1,305 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Assets/Scripts/Project/References.cs" type="Script" id=1]
+[ext_resource path="res://Assets/Scripts/Project/Player.cs" type="Script" id=2]
+[ext_resource path="res://Assets/Scripts/Project/Navigation.cs" type="Script" id=4]
+[ext_resource path="res://Assets/Scripts/Project/UIManager.cs" type="Script" id=5]
+[ext_resource path="res://Assets/Scripts/Project/Factory.cs" type="Script" id=6]
+
+[sub_resource type="BoxShape" id=1]
+extents = Vector3( 1, 1.06236, 1.0284 )
+
+[sub_resource type="CubeMesh" id=2]
+
+[sub_resource type="SpatialMaterial" id=3]
+
+[sub_resource type="CubeMesh" id=4]
+
+[sub_resource type="SpatialMaterial" id=5]
+albedo_color = Color( 0.984314, 0.0196078, 0.0196078, 1 )
+
+[sub_resource type="DynamicFontData" id=6]
+font_path = "res://Assets/Fonts/helvetica.otf"
+
+[sub_resource type="DynamicFont" id=7]
+size = 20
+use_mipmaps = true
+use_filter = true
+font_data = SubResource( 6 )
+
+[node name="MainScene" type="Node"]
+
+[node name="Main" type="Node" parent="."]
+
+[node name="References" type="Node" parent="Main"]
+script = ExtResource( 1 )
+
+[node name="UIManager" type="Node" parent="Main"]
+script = ExtResource( 5 )
+
+[node name="Factory" type="Node" parent="Main"]
+script = ExtResource( 6 )
+
+[node name="World" type="Spatial" parent="."]
+
+[node name="Player" type="KinematicBody" parent="World"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.23131, 0 )
+script = ExtResource( 2 )
+
+[node name="Collider" type="CollisionShape" parent="World/Player"]
+shape = SubResource( 1 )
+
+[node name="Body" type="MeshInstance" parent="World/Player"]
+mesh = SubResource( 2 )
+material/0 = SubResource( 3 )
+
+[node name="Nose" type="MeshInstance" parent="World/Player"]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, -1.24371 )
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
+
+[node name="CamHolder" type="Spatial" parent="World/Player"]
+script = ExtResource( 4 )
+
+[node name="Camera" type="Camera" parent="World/Player/CamHolder"]
+transform = Transform( 1, 0, 0, 0, 0.940733, 0.339148, 0, -0.339148, 0.940733, 0, 6.42457, 11.167 )
+far = 8192.0
+
+[node name="DirectionalLight" type="DirectionalLight" parent="World"]
+transform = Transform( -0.539797, 0.537682, -0.647701, -0.143549, 0.699363, 0.700204, 0.829465, 0.470945, -0.30033, 0, 100, 0 )
+
+[node name="UI" type="Control" parent="."]
+margin_right = 1022.0
+margin_bottom = 600.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SettingsPanel" type="Panel" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -152.0
+margin_top = 1.0
+margin_right = 1.0
+margin_bottom = 600.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SeedLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
+margin_left = 1.0
+margin_top = 5.0
+margin_right = 152.0
+margin_bottom = 40.0
+bbcode_enabled = true
+bbcode_text = "[center]Seed
+(Empty = Random)"
+text = "Seed
+(Empty = Random)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SeedLine" type="LineEdit" parent="UI/SettingsPanel"]
+margin_top = 37.0
+margin_right = 153.0
+margin_bottom = 61.0
+focus_mode = 1
+align = 1
+shortcut_keys_enabled = false
+selecting_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ChunkSizeLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
+margin_left = 1.48767
+margin_top = 64.0
+margin_right = 152.488
+margin_bottom = 82.0
+bbcode_enabled = true
+bbcode_text = "[center]Chunk Size"
+text = "Chunk Size"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ChSizeLine" type="LineEdit" parent="UI/SettingsPanel"]
+margin_top = 81.0
+margin_right = 153.0
+margin_bottom = 105.0
+focus_mode = 1
+text = "10"
+align = 1
+shortcut_keys_enabled = false
+selecting_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ChunkAmountLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
+margin_left = 1.48767
+margin_top = 110.0
+margin_right = 152.488
+margin_bottom = 128.0
+bbcode_enabled = true
+bbcode_text = "[center]Chunk Amount"
+text = "Chunk Amount"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ChAmountLine" type="LineEdit" parent="UI/SettingsPanel"]
+margin_top = 129.0
+margin_right = 153.0
+margin_bottom = 153.0
+focus_mode = 1
+text = "10"
+align = 1
+shortcut_keys_enabled = false
+selecting_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SteepnessLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
+margin_left = 1.48767
+margin_top = 158.0
+margin_right = 152.488
+margin_bottom = 176.0
+bbcode_enabled = true
+bbcode_text = "[center]Steepness"
+text = "Steepness"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SteepnessLine" type="LineEdit" parent="UI/SettingsPanel"]
+margin_top = 177.0
+margin_right = 153.0
+margin_bottom = 201.0
+focus_mode = 1
+text = "50"
+align = 1
+shortcut_keys_enabled = false
+selecting_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SlopeLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
+margin_left = 1.0
+margin_top = 211.0
+margin_right = 152.0
+margin_bottom = 242.0
+bbcode_enabled = true
+bbcode_text = "[center]Walkable Slope
+(Max: 90°)"
+text = "Walkable Slope
+(Max: 90°)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SlopeLine" type="LineEdit" parent="UI/SettingsPanel"]
+margin_top = 244.0
+margin_right = 153.0
+margin_bottom = 268.0
+focus_mode = 1
+text = "30"
+align = 1
+shortcut_keys_enabled = false
+selecting_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ForestLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
+margin_left = 1.0
+margin_top = 272.0
+margin_right = 152.0
+margin_bottom = 303.0
+bbcode_enabled = true
+bbcode_text = "[center]Forestation Chance
+(Max: 100)"
+text = "Forestation Chance
+(Max: 100)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ForestLine" type="LineEdit" parent="UI/SettingsPanel"]
+margin_top = 303.0
+margin_right = 153.0
+margin_bottom = 327.0
+focus_mode = 1
+text = "50"
+align = 1
+shortcut_keys_enabled = false
+selecting_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RegionLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
+margin_left = 1.0
+margin_top = 331.0
+margin_right = 152.0
+margin_bottom = 352.0
+bbcode_enabled = true
+bbcode_text = "[center]Region Amount"
+text = "Region Amount"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RegionLine" type="LineEdit" parent="UI/SettingsPanel"]
+margin_top = 354.0
+margin_right = 153.0
+margin_bottom = 378.0
+focus_mode = 1
+text = "5"
+align = 1
+shortcut_keys_enabled = false
+selecting_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TerrainButton" type="CheckButton" parent="UI/SettingsPanel"]
+margin_top = 452.0
+margin_right = 153.0
+margin_bottom = 492.0
+focus_mode = 1
+text = "Terrain"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PointsButton" type="CheckButton" parent="UI/SettingsPanel"]
+margin_top = 492.0
+margin_right = 153.0
+margin_bottom = 532.0
+focus_mode = 1
+text = "Points"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InfoPanel" type="Panel" parent="UI"]
+margin_left = -2.0
+margin_right = 300.0
+margin_bottom = 29.0
+
+[node name="PositionText" type="RichTextLabel" parent="UI/InfoPanel"]
+margin_right = 302.0
+margin_bottom = 29.0
+custom_fonts/normal_font = SubResource( 7 )
+bbcode_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="toggled" from="UI/SettingsPanel/TerrainButton" to="Main/UIManager" method="ToggleTerrain"]
+[connection signal="toggled" from="UI/SettingsPanel/PointsButton" to="Main/UIManager" method="TogglePoints"]
