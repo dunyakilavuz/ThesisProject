@@ -65,6 +65,9 @@
     <Compile Include="Assets\Scripts\Project\UIUtils.cs" />
     <Compile Include="Assets\Scripts\Project\Region.cs" />
     <Compile Include="Assets\Scripts\Project\Map.cs" />
+    <Compile Include="Assets\Scripts\Project\Edge.cs" />
+    <Compile Include="Assets\Scripts\Project\Graph.cs" />
+    <Compile Include="Assets\Scripts\Project\GraphVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -4,7 +4,7 @@ public class Map : Spatial
 {
     public Chunk[,] gridChunk;
     public int[,] grid;
-    public int[,] regionMap;
+    public Graph regionGraph;
 
 
 
@@ -45,6 +45,7 @@ public class Map : Spatial
         /*Grid to int*/
 
         GenerateRegions();
+        GenerateGraph();
     }
 
     public void GenerateRegions()
@@ -113,7 +114,7 @@ public class Map : Spatial
                     {
                         if(grid[i,j] == regionNumber)
                         {
-                            Vector2 result = checkNeighbors(i,j,grid);
+                            Vector2 result = checkNeighborsOne(i,j,grid);
                             if(result != Vector2.NegOne)
                             {
                                 grid[(int)result.x,(int)result.y] = regionNumber;
@@ -138,7 +139,70 @@ public class Map : Spatial
 
     }
 
-    Vector2 checkNeighbors(int i, int j, int[,] map)
+    void GenerateGraph()
+    {
+        int regions = References.regions;
+        int mapSize = References.chunkAmount;
+
+        if(regionGraph == null)
+            regionGraph = new Graph();
+
+        /*Add Vertices*/
+        for(int i = 0; i < References.regions; i++)
+        {
+            GraphVertex vertex = new GraphVertex(i + 2);
+            regionGraph.AddVertex(vertex);
+        }
+
+        /*Add Edges*/
+        for(int i = 0; i < mapSize; i++)
+        {
+            for(int j = 0; j < mapSize; j++)
+            {
+                GraphVertex A = new GraphVertex(grid[i,j]);
+                GraphVertex B;
+                Edge edge;
+
+                /*UP*/
+                if(i - 1 >= 0)
+                {  
+                    B = new GraphVertex(grid[i - 1, j]);
+                    edge = new Edge(A,B);
+                    regionGraph.AddEdge(edge);
+                }
+
+                /*LEFT*/
+                if(j + 1 < References.chunkAmount)
+                {
+                    B = new GraphVertex(grid[i, j + 1]);
+                    edge = new Edge(A,B);
+                    regionGraph.AddEdge(edge);
+                }
+
+                /*DOWN*/
+                if(i + 1 < References.chunkAmount)
+                {
+                    B = new GraphVertex(grid[i + 1, j]);
+                    edge = new Edge(A,B);
+                    regionGraph.AddEdge(edge);
+                }
+
+                /*RIGHT*/
+                if(j - 1 >= 0)
+                {
+                    B = new GraphVertex(grid[i, j - 1]);
+                    edge = new Edge(A,B);
+                    regionGraph.AddEdge(edge);
+                }
+
+            }
+        }        
+
+        regionGraph.PrintGraph();
+
+    }
+
+    Vector2 checkNeighborsOne(int i, int j, int[,] map)
     {
         /*UP*/
         if(i - 1 >= 0)
@@ -181,6 +245,7 @@ public class Map : Spatial
 
     void printGrid(int[,] map)
     {
+        GD.Print("\n--Region Map--");
         string result = "";
         for(int i = 0; i < References.chunkAmount; i++)
         {
@@ -198,6 +263,7 @@ public class Map : Spatial
     {
         gridChunk = null;
         grid = null;
+        regionGraph = null;
     }
     
 }
