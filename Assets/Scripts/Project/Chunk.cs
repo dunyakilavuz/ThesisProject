@@ -8,6 +8,9 @@ public class Chunk : Spatial
     public float avgHeight = 0.0f;
     public float slope = 0;
 
+    public float lightness = 0;
+    public float visibility = 0;
+
     PlaneMesh planeMesh;
     SurfaceTool surfaceTool;
     MeshDataTool meshDataTool;
