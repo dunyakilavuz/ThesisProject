@@ -2,15 +2,16 @@ using Godot;
 using System.Collections.Generic;
 public class Quest
 {
-    string name;
     QuestType type;
     int identifier;
+    bool done;
+    Quest preReq;
 
     public Quest(string name, QuestType type, int identifier)
     {
-        this.name = name;
         this.type = type;
         this.identifier = identifier;
+        this.done = false;
     }
 
 

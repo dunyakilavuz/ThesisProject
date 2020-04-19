@@ -19,3 +19,9 @@ E:\Workspace\ThesisProject\.mono\temp\bin\Tools\ThesisProject.pdb
 E:\Workspace\ThesisProject\.mono\temp\obj\Tools\ThesisProject.csprojAssemblyReference.cache
 E:\Workspace\ThesisProject\.mono\temp\obj\Tools\ThesisProject.dll
 E:\Workspace\ThesisProject\.mono\temp\obj\Tools\ThesisProject.pdb
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\bin\Tools\ThesisProject.dll
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\bin\Tools\ThesisProject.pdb
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\obj\Tools\ThesisProject.csprojAssemblyReference.cache
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\obj\Tools\ThesisProject.csproj.CoreCompileInputs.cache
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\obj\Tools\ThesisProject.dll
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\obj\Tools\ThesisProject.pdb

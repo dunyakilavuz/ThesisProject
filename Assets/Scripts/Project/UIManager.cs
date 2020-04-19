@@ -4,15 +4,17 @@ using System;
 public class UIManager : Node
 {
     static string UIPath = "/root/MainScene/";
+    RichTextLabel infoText;
 
     public override void _Ready()
     {
+        infoText = (RichTextLabel)GetNode(UIPath + "UI/InfoPanel/InfoText");
         ReadInput();
     }
 
     public override void _Process(float delta)
     {
-        SetPositionText();
+        SetInfoText();
     }
 
     void ReadInput()
@@ -20,7 +22,6 @@ public class UIManager : Node
         string seedText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/SeedLine")).Text;
         string chunkSizeText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/ChSizeLine")).Text;
         string chunkAmountText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/ChAmountLine")).Text;
-        string steepnessText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/SteepnessLine")).Text;
         string slopeText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/SlopeLine")).Text;
         string forestText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/ForestLine")).Text;
         string regionText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/RegionLine")).Text;
@@ -28,20 +29,18 @@ public class UIManager : Node
         int seed;
         int chunkSize;
         int chunkAmount;
-        int steepness;
         int slope;
         int forestChance;
         int regions;
 
 
         if(seedText == "")
-            seed = References.random.Next();
+            seed = Maths.RandomInt();
         else
             Int32.TryParse(seedText, out seed);
 
         Int32.TryParse(chunkSizeText, out chunkSize);
         Int32.TryParse(chunkAmountText, out chunkAmount);
-        Int32.TryParse(steepnessText, out steepness);
         Int32.TryParse(slopeText, out slope);
         Int32.TryParse(forestText, out forestChance);
         Int32.TryParse(regionText, out regions);
@@ -49,7 +48,6 @@ public class UIManager : Node
         References.noise.Seed = seed;
         References.chunkSize = chunkSize;
         References.chunkAmount = chunkAmount;
-        References.Steepness = steepness;
         References.walkableSlope = slope;
         References.forestChance = forestChance;
         References.regions = regions;
@@ -61,35 +59,43 @@ public class UIManager : Node
         ReadInput();
 
         if(enabled)
-            References.factory.GenerateTerrain();
+            References.terrainFactory.GenerateTerrain();
         else
-            References.factory.ClearTerrain();
-
-        if(enabled)
-            References.factory.GenerateForest();
-        else
-            References.factory.ClearForest();
+            References.terrainFactory.ClearTerrain();
     }
 
-    public void TogglePoints(bool enabled)
+    public void ToggleBorders(bool enabled)
     {
         ReadInput();
 
         if(enabled)
-            References.factory.GeneratePoints();
+            References.drawChunkBorders = true;
         else
-            References.factory.ClearPoints();
+            References.drawChunkBorders = false;
     }
 
-    void SetPositionText()
+    public void ToggleQuests(bool enabled)
     {
-        string positionText = "Position: " + References.player.Transform.origin.ToString("F2");
-        ((RichTextLabel)GetNode(UIPath + "UI/InfoPanel/PositionText")).BbcodeText = UIUtils.CenterText(positionText);;
+        ReadInput();
+
+        if(enabled)
+            References.questFactory.GenerateQuests();
+        else
+            References.questFactory.ClearQuests();
     }
 
-    public static Color GenerateColor(int number)
+    void SetInfoText()
+    {
+        string infoString = "";
+        string positionText = "Player Pos: " + References.player.Transform.origin.ToString("F2");
+        string regionText = "Player Region: " + References.player.Region;
+        infoString += positionText + "\n" + regionText;
+        infoText.BbcodeText = infoString;
+    }
+
+    public static Color IntToColor(int value, float alpha = 1)
     {   
-        float hue = (float)number / (float)References.regions + 5;
-        return Color.FromHsv(hue,1,1,1);
+        float hue = (float)value / (float)References.regions + 5;
+        return Color.FromHsv(hue,1,1,alpha);
     }
 }

@@ -1,6 +1,4 @@
 using Godot;
-using System;
-
 using Vector3 = Godot.Vector3;
 
 public class Player : KinematicBody
@@ -14,6 +12,8 @@ public class Player : KinematicBody
 
     Vector2 mousePosLast = Vector2.Zero;
     Vector2 mousePos = Vector2.Zero;
+    int region = -1;
+    Vector3 position;
 
     public override void _Ready()
     {
@@ -26,6 +26,27 @@ public class Player : KinematicBody
         deltaTime = delta;
         RotatePlayer();
         MovePlayer();
+    }
+
+    public int Region
+    {
+        get
+        {
+            return region;
+        }
+
+        set
+        {
+            region = value;
+        }
+    }
+
+    public Vector3 Position
+    {
+        get
+        {
+            return position;
+        }
     }
 
     void MovePlayer()
@@ -62,6 +83,7 @@ public class Player : KinematicBody
         }
 
         MoveAndCollide(velocity);
+        position = Translation;
     }
 
     void RotatePlayer()

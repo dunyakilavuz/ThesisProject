@@ -7,9 +7,13 @@ public class Chunk : Spatial
     int chunkSize;
     public float avgHeight = 0.0f;
     public float slope = 0;
+    public int regionNumber;
 
-    public float lightness = 0;
-    public float visibility = 0;
+
+    public int treeCount = 0;
+    public int grassCount = 0;
+    public int boulderCount = 0;
+
 
     PlaneMesh planeMesh;
     SurfaceTool surfaceTool;
@@ -17,14 +21,59 @@ public class Chunk : Spatial
     ArrayMesh arrayPlane;
     MeshInstance meshInstance;
 
+
+    public MeshInstance chunkBorders;
+    Area collisionArea;
+    int areaHeight;
+
+
+    public override void _Ready()
+    {
+        
+    }
+
+    public override void _Process(float delta)
+    {
+        if(References.drawChunkBorders)
+            chunkBorders.Visible = true;
+        else   
+            chunkBorders.Visible = false;
+    }
+
+    public void AreaEntered(PhysicsBody body)
+    {
+        try
+        {
+            Player player = (Player) body;
+            if(player != null)
+            {
+                player.Region = regionNumber;
+            }
+        }
+        catch{}
+    }
+
+    public void AreaExited(PhysicsBody body)
+    {
+
+    }
+
+
+
     public void Init(Vector3 position)
     {
         this.noise = References.noise;
         this.chunkSize = References.chunkSize;
         this.position = position * chunkSize;
         Translation = this.position;
-    }
 
+        chunkBorders = (MeshInstance)GetChild(0);
+        collisionArea = (Area)GetChild(1);
+        areaHeight = References.chunkAreaHeight;
+    
+        chunkBorders.Scale = new Vector3(References.chunkSize * 0.5f,areaHeight,References.chunkSize * 0.5f);
+        collisionArea.Scale = new Vector3(References.chunkSize * 0.5f,areaHeight,References.chunkSize * 0.5f);
+    }
     public void Generate()
     {
         planeMesh = new PlaneMesh();
@@ -44,7 +93,7 @@ public class Chunk : Spatial
             vertex.y = noise.GetNoise3d(
                 vertex.x + position.x,
                 vertex.y,
-                vertex.z + position.z) * References.Steepness;
+                vertex.z + position.z) * References.steepness;
 
             meshDataTool.SetVertex(i,vertex);
             avgHeight += vertex.y;

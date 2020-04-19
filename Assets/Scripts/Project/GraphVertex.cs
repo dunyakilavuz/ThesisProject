@@ -5,6 +5,7 @@ public class GraphVertex
 {  
     int data;
     Quest quest;
+    int connections;
 
     public GraphVertex(int data)
     {
@@ -21,6 +22,19 @@ public class GraphVertex
         get
         {
             return data;
+        }
+    }
+
+    public int Connections
+    {
+        get
+        {
+            return connections;
+        }
+
+        set
+        {
+            connections = value;
         }
     }
 

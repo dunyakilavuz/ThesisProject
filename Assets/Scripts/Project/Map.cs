@@ -3,11 +3,9 @@ using System.Collections.Generic;
 public class Map : Spatial
 {
     public Chunk[,] gridChunk;
+    public Region[] regions;
     public int[,] grid;
     public Graph regionGraph;
-
-
-
 
     public void Init(List<Chunk> chunks)
     {
@@ -50,12 +48,12 @@ public class Map : Spatial
 
     public void GenerateRegions()
     {
-        int regions = References.regions;
+        int regionSize = References.regions;
         int mapSize = References.chunkAmount;
+        regions = new Region[regionSize];
 
         /*Select random cells as region start points.*/
-
-        Vector2[] regionPositions = new Vector2[regions];
+        Vector2[] regionPositions = new Vector2[regionSize];
         int u = 0;
         for(int i = 0; i < mapSize; i++)
         {
@@ -66,11 +64,11 @@ public class Map : Spatial
                     regionPositions[u] = new Vector2(i,j);
                     u++;
 
-                    if(u >= regions)
+                    if(u >= regionSize)
                         break;
                 }
             }
-            if(u >= regions)
+            if(u >= regionSize)
                 break;
         }
 
@@ -80,8 +78,8 @@ public class Map : Spatial
             {
                 if(grid[i,j] == 1)
                 {
-                    int rnd = References.random.Next(0,mapSize);
-                    if(rnd < regions)
+                    int rnd = Maths.RandomInt(0,mapSize);
+                    if(rnd < regionSize)
                     {
                         regionPositions[rnd] = new Vector2(i,j);
                     }
@@ -91,21 +89,24 @@ public class Map : Spatial
 
         int regionNumber = 2; // Since 0 denotes empty and 1 is available cells, regions start from 2.
 
-        for(int i = 0; i < regionPositions.Length; i++)
+        for(int i = 0; i < regionSize; i++)
         {
+            Region region = new Region(regionNumber);
+            regions[i] = region;
             Vector2 pos = regionPositions[i];
-            grid[(int)pos.x,(int)pos.y] = regionNumber;
+            grid[(int)pos.x,(int)pos.y] = region.number;
             regionNumber++;
         }
 
         /*Spread of the regions*/
+
         bool regionSpread;
         int l = 0;
 
-        while(l < regions * 5)
+        while(l < regionSize * 5)
         {
             regionNumber = 2;
-            for(int k = 0; k < regions; k++)
+            for(int k = 0; k < regionSize; k++)
             {
                 regionSpread = false;
                 for(int i = 0; i < mapSize; i++)
@@ -118,6 +119,8 @@ public class Map : Spatial
                             if(result != Vector2.NegOne)
                             {
                                 grid[(int)result.x,(int)result.y] = regionNumber;
+                                gridChunk[(int)result.x,(int)result.y].regionNumber = regionNumber;
+                                regions[k].AddChunk(gridChunk[(int)result.x,(int)result.y]);
                                 regionSpread = true;
                                 break;
                             }
@@ -134,8 +137,14 @@ public class Map : Spatial
             l++;
         }
 
+        for(int i = 0; i < regions.Length; i++)
+            regions[i].CalcRegionProperties();
+
         /*Print Results*/
         printGrid(grid);
+        
+        for(int i = 0; i < regions.Length; i++)
+            regions[i].printRegion();
 
     }
 

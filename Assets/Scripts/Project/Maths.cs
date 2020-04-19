@@ -4,6 +4,7 @@ using System;
 public class Maths
 {
     public static float PI = 3.14159265359f;
+    static Random random;
     public static float EaseInOut(float from, float to, float factor)
     {
         int a = 2;
@@ -75,6 +76,30 @@ public class Maths
         {
             return 360f + from - to;
         }
+    }
+
+    public static float RandomFloat(float min, float max)
+    {
+        if(random == null)
+            random = new Random();
+
+        return (float)random.NextDouble() * (max - min) + min;
+    }
+
+    public static int RandomInt(int min, int max)
+    {
+        if(random == null)
+            random = new Random();
+
+        return random.Next(min, max + 1);
+    }
+
+    public static int RandomInt()
+    {
+        if(random == null)
+            random = new Random();
+
+        return random.Next();
     }
 
     public static float ClampAngle(float angle, float min, float max)

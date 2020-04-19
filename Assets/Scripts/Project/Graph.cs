@@ -7,6 +7,7 @@ public class Graph
     public List<GraphVertex> vertices;
     public List<Edge> edges;
 
+
     public bool AddVertex(GraphVertex vertex)
     {
         if(vertices == null)
@@ -46,6 +47,13 @@ public class Graph
         {
             if(edge.A.Data > 1 && edge.B.Data > 1 && edge.A.Data != edge.B.Data)
             {
+                for(int i = 0; i < vertices.Count; i++)
+                {
+                    if(vertices[i].Data == edge.A.Data)
+                        vertices[i].Connections++;
+                    if(vertices[i].Data == edge.B.Data)
+                        vertices[i].Connections++;
+                }
                 edges.Add(edge);
                 return true;
             }
@@ -71,12 +79,80 @@ public class Graph
         
         if(discard == false)
         {
+            for(int i = 0; i < vertices.Count; i++)
+            {
+                if(vertices[i].Data == edge.A.Data)
+                    vertices[i].Connections++;
+                if(vertices[i].Data == edge.B.Data)
+                    vertices[i].Connections++;
+            }
             edges.Add(edge);
             return true;
         }
         else
             return false;
     }
+
+
+    public GraphVertex MostConnected()
+    {
+        int max = -99;
+        int index = -1;
+        for(int i = 0; i < vertices.Count; i++)
+        {
+            if(vertices[i].Connections > max)
+            {
+                index = i;
+                max = vertices[i].Connections;
+            }
+        }
+
+        if(index != -1)
+            return vertices[index];
+        else
+            return null;
+    }
+
+    public GraphVertex LeastConnected()
+    {
+        int min = 99;
+        int index = -1;
+
+        for(int i = 0; i < vertices.Count; i++)
+        {
+            if(vertices[i].Connections != 0) // Not accepting 0 connections, because that kind of node is disconnected.
+            {
+                if(vertices[i].Connections < min)
+                {
+                    index = i;
+                    min = vertices[i].Connections;
+                }
+            }
+        }
+
+        if(index != -1)
+            return vertices[index];
+        else
+            return null;
+    }
+
+    public GraphVertex Disconnected()
+    {
+        int index = -1;
+
+        for(int i = 0; i < vertices.Count; i++)
+        {
+            if(vertices[i].Connections == 0)
+                index = i;
+        }
+
+        if(index != -1)
+            return vertices[index];
+        else
+            return null;
+    }
+
+
 
     public void PrintGraph()
     {
@@ -101,5 +177,25 @@ public class Graph
         text = text.Remove(text.Length - 2, 1);  
         text += "}";
         GD.Print(text);
+
+
+        GraphVertex mostConnected = MostConnected();
+        GraphVertex leastConnected = LeastConnected();
+        GraphVertex disconnected = Disconnected();
+
+        if(mostConnected != null)
+            GD.Print("Most Connected Node: " + mostConnected.Data);
+        else
+            GD.Print("No most connected node found.");
+
+        if(leastConnected != null)
+            GD.Print("Least Connected Node: " + leastConnected.Data);
+        else
+            GD.Print("No least connected node found.");
+
+        if(disconnected != null)
+            GD.Print("Disconnected Node: " + disconnected.Data);
+        else
+            GD.Print("No disconnected node found.");
     }
 }

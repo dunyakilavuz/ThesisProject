@@ -53,13 +53,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Project\Chunk.cs" />
-    <Compile Include="Assets\Scripts\Project\Factory.cs" />
     <Compile Include="Assets\Scripts\Project\Main.cs" />
     <Compile Include="Assets\Scripts\Project\Maths.cs" />
     <Compile Include="Assets\Scripts\Project\Navigation.cs" />
     <Compile Include="Assets\Scripts\Project\Player.cs" />
+    <Compile Include="Assets\Scripts\Project\QuestFactory.cs" />
     <Compile Include="Assets\Scripts\Project\References.cs" />
-    <Compile Include="Assets\Scripts\Project\Point.cs" />
+    <Compile Include="Assets\Scripts\Project\TerrainFactory.cs" />
     <Compile Include="Assets\Scripts\Project\UIManager.cs" />
     <Compile Include="Assets\Scripts\Project\Utils.cs" />
     <Compile Include="Assets\Scripts\Project\UIUtils.cs" />
