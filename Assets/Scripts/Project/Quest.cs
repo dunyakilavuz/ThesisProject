@@ -45,6 +45,30 @@ public class Quest
             GD.Print("Quest has prerequisite.");
     }
 
+    public override string ToString()
+    {
+        string str = "--- Quest " + identifier + " ---\n";
+        if(option == QuestOption.NoOption)
+            str += "Objective: " + type.ToString() + ".";
+        else
+            str += "Objective: " + type.ToString() + " with " + option.ToString() + ".";
+
+        str += "\n";
+        if(Available())
+            str += "Quest available.";
+        else
+        {
+            str += "Prerequisite: Quests ";
+            for(int i = 0; i < prerequisite.Count; i++)
+            {
+                str += prerequisite[i].identifier;
+                if(i + 1 < prerequisite.Count)
+                    str+= ",";
+            }
+        }
+        return str;
+    }
+
     public bool Done
     {
         get

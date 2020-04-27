@@ -29,6 +29,8 @@ public class QuestFactory : Node
 
         
         GraphVertex mostConnected = map.regionGraph.MostConnected();
+        Quest q = GenerateQuest(1);
+        mostConnected.Region.quests.Add(q);
         
         for(int i = 0; i < questCount; i++)
         {
@@ -36,7 +38,12 @@ public class QuestFactory : Node
         }
     }
 
-    Quest ReadRegion(int questID)
+    GraphVertex NextRegion(GraphVertex vert)
+    {
+        return null;
+    }
+
+    Quest GenerateQuest(int questID)
     {
         Quest.QuestType type = (Quest.QuestType)Maths.RandomInt(1,6);
         Quest.QuestOption option = (Quest.QuestOption)Maths.RandomInt(1,2);

@@ -14,11 +14,6 @@ public class GraphVertex
         connections = new List<GraphVertex>();
     }
 
-    public GraphVertex(Region region)
-    {
-        this.region = region;
-    }
-
     public void AddConnection(GraphVertex vert)
     {
         connections.Add(vert);
