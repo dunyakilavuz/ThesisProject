@@ -7,7 +7,7 @@ public class Chunk : Spatial
     int chunkSize;
     public float avgHeight = 0.0f;
     public float slope = 0;
-    public int regionNumber;
+    public Region region;
 
 
     public int treeCount = 0;
@@ -29,7 +29,8 @@ public class Chunk : Spatial
 
     public override void _Ready()
     {
-        
+        if(region == null)
+            region = new Region(-1);
     }
 
     public override void _Process(float delta)
@@ -46,9 +47,7 @@ public class Chunk : Spatial
         {
             Player player = (Player) body;
             if(player != null)
-            {
-                player.Region = regionNumber;
-            }
+                player.Region = region;
         }
         catch{}
     }

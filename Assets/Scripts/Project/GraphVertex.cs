@@ -1,20 +1,27 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public class GraphVertex
 {  
     int data;
-    Quest quest;
-    int connections;
+    Region region;
+    List<GraphVertex> connections;
 
     public GraphVertex(int data)
     {
         this.data = data;
+        connections = new List<GraphVertex>();
     }
 
-    public GraphVertex(Quest quest)
+    public GraphVertex(Region region)
     {
-        this.quest = quest;
+        this.region = region;
+    }
+
+    public void AddConnection(GraphVertex vert)
+    {
+        connections.Add(vert);
     }
 
     public int Data
@@ -29,20 +36,18 @@ public class GraphVertex
     {
         get
         {
-            return connections;
-        }
-
-        set
-        {
-            connections = value;
+            if(connections == null)
+                return 0;
+            else
+                return connections.Count;
         }
     }
 
-    public Quest Quest
+    public Region Region
     {
         get
         {
-            return quest;
+            return region;
         }
     }
 

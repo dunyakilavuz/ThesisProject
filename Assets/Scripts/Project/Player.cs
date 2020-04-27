@@ -12,7 +12,7 @@ public class Player : KinematicBody
 
     Vector2 mousePosLast = Vector2.Zero;
     Vector2 mousePos = Vector2.Zero;
-    int region = -1;
+    Region region;
     Vector3 position;
 
     public override void _Ready()
@@ -28,7 +28,7 @@ public class Player : KinematicBody
         MovePlayer();
     }
 
-    public int Region
+    public Region Region
     {
         get
         {

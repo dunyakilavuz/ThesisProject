@@ -72,12 +72,12 @@ public class TerrainFactory : Node
         {
             for(int j = 0; j < References.chunkAmount; j++)
             {
-                if(grid[i,j] != 0)
+                if(grid[i,j] >= 0)
                 {
                     MeshInstance border = chunkGrid[i,j].chunkBorders;
                     Color borderColor = UIManager.IntToColor(grid[i,j],1);
                     Paint(border,borderColor);
-                    chunkGrid[i,j].regionNumber = grid[i,j];
+                    chunkGrid[i,j].region = new Region(grid[i,j]);
                 }
             }
         }

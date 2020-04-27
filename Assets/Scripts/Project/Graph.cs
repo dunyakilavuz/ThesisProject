@@ -45,14 +45,14 @@ public class Graph
 
         if(edges.Count == 0)
         {
-            if(edge.A.Data > 1 && edge.B.Data > 1 && edge.A.Data != edge.B.Data)
+            if(edge.A.Data >= 0 && edge.B.Data >= 0 && edge.A.Data != edge.B.Data)
             {
                 for(int i = 0; i < vertices.Count; i++)
                 {
                     if(vertices[i].Data == edge.A.Data)
-                        vertices[i].Connections++;
+                        vertices[i].AddConnection(edge.B);
                     if(vertices[i].Data == edge.B.Data)
-                        vertices[i].Connections++;
+                        vertices[i].AddConnection(edge.A);
                 }
                 edges.Add(edge);
                 return true;
@@ -67,7 +67,7 @@ public class Graph
         for(int i = 0; i < edges.Count; i++)
         {
             if(
-            (edge.A.Data < 2 || edge.B.Data < 2) ||
+            (edge.A.Data < 0 || edge.B.Data < 0) ||
             (edge.A.Data == edge.B.Data) ||
             ((edge.A.Data == edges[i].A.Data) && (edge.B.Data == edges[i].B.Data)) ||
             ((edge.A.Data == edges[i].B.Data) && (edge.B.Data == edges[i].A.Data)))
@@ -82,9 +82,9 @@ public class Graph
             for(int i = 0; i < vertices.Count; i++)
             {
                 if(vertices[i].Data == edge.A.Data)
-                    vertices[i].Connections++;
+                    vertices[i].AddConnection(edge.B);
                 if(vertices[i].Data == edge.B.Data)
-                    vertices[i].Connections++;
+                    vertices[i].AddConnection(edge.A);
             }
             edges.Add(edge);
             return true;

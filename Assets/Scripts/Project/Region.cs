@@ -6,6 +6,7 @@ public class Region : Node
 {
     public int number;
     List<Chunk> chunks;
+    public List<Quest> quests;
     float lightness = 1;
     float visibility = 1;
     float cover = 0;
@@ -31,18 +32,36 @@ public class Region : Node
         grassCount += chunk.grassCount;
     }
 
+    public void AddQuest(Quest quest)
+    {
+        if(quests == null)
+            quests = new List<Quest>();
+        
+        quests.Add(quest);
+    }
+
     public void CalcRegionProperties()
     {
-        lightness = 1 - ((float)treeCount / (float)chunks.Count);
-        visibility = 1 - ((float)grassCount / (float)chunks.Count);  
-        cover = (float)boulderCount / (float)chunks.Count;
+        if(chunks == null)
+        {
+            GD.Print("Region " + number + " is empty, no properties.");
+        }
+        else
+        {
+            lightness = 1 - ((float)treeCount / (float)chunks.Count);
+            visibility = 1 - ((float)grassCount / (float)chunks.Count);  
+            cover = (float)boulderCount / (float)chunks.Count;
+        }
     }
 
     public void printRegion()
     {
         GD.Print("---");
         GD.Print("Region number: " + number);
-        GD.Print("Chunks: " + chunks.Count);
+        if(chunks != null)
+            GD.Print("Chunks: " + chunks.Count);
+        else
+            GD.Print("Chunks: 0");
         GD.Print("Lightness: " + lightness  + " , Visibility: " + visibility + " , Cover: " + cover);
         GD.Print("---");
     }

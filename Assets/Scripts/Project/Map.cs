@@ -32,11 +32,11 @@ public class Map : Spatial
             {                
                 if(gridChunk[i,j].avgHeight > 0 && gridChunk[i,j].slope < References.walkableSlope)
                 {
-                    grid[i,j] = 1;
+                    grid[i,j] = -1; // Available cells for regions
                 }
                 else
                 {
-                    grid[i,j] = 0;
+                    grid[i,j] = -2; // Non available cells.
                 }
             }
         }
@@ -48,7 +48,7 @@ public class Map : Spatial
 
     public void GenerateRegions()
     {
-        int regionSize = References.regions;
+        int regionSize = References.regionSize;
         int mapSize = References.chunkAmount;
         regions = new Region[regionSize];
 
@@ -59,7 +59,7 @@ public class Map : Spatial
         {
             for(int j = 0; j < mapSize; j++)
             {
-                if(grid[i,j] == 1)
+                if(grid[i,j] == -1)
                 {
                     regionPositions[u] = new Vector2(i,j);
                     u++;
@@ -76,7 +76,7 @@ public class Map : Spatial
         {
             for(int j = 0; j < mapSize; j++)
             {
-                if(grid[i,j] == 1)
+                if(grid[i,j] == -1)
                 {
                     int rnd = Maths.RandomInt(0,mapSize);
                     if(rnd < regionSize)
@@ -87,15 +87,12 @@ public class Map : Spatial
             }
         }
 
-        int regionNumber = 2; // Since 0 denotes empty and 1 is available cells, regions start from 2.
-
         for(int i = 0; i < regionSize; i++)
         {
-            Region region = new Region(regionNumber);
+            Region region = new Region(i);
             regions[i] = region;
             Vector2 pos = regionPositions[i];
             grid[(int)pos.x,(int)pos.y] = region.number;
-            regionNumber++;
         }
 
         /*Spread of the regions*/
@@ -105,7 +102,6 @@ public class Map : Spatial
 
         while(l < regionSize * 5)
         {
-            regionNumber = 2;
             for(int k = 0; k < regionSize; k++)
             {
                 regionSpread = false;
@@ -113,13 +109,13 @@ public class Map : Spatial
                 {
                     for(int j = 0; j < mapSize; j++)
                     {
-                        if(grid[i,j] == regionNumber)
+                        if(grid[i,j] == k)
                         {
-                            Vector2 result = checkNeighborsOne(i,j,grid);
+                            Vector2 result = checkNeighbors(i,j,grid);
                             if(result != Vector2.NegOne)
                             {
-                                grid[(int)result.x,(int)result.y] = regionNumber;
-                                gridChunk[(int)result.x,(int)result.y].regionNumber = regionNumber;
+                                grid[(int)result.x,(int)result.y] = k;
+                                gridChunk[(int)result.x,(int)result.y].region = regions[k];
                                 regions[k].AddChunk(gridChunk[(int)result.x,(int)result.y]);
                                 regionSpread = true;
                                 break;
@@ -132,7 +128,6 @@ public class Map : Spatial
                         break;
                     }
                 }
-                regionNumber++;
             }
             l++;
         }
@@ -150,16 +145,15 @@ public class Map : Spatial
 
     void GenerateGraph()
     {
-        int regions = References.regions;
         int mapSize = References.chunkAmount;
 
         if(regionGraph == null)
             regionGraph = new Graph();
 
         /*Add Vertices*/
-        for(int i = 0; i < References.regions; i++)
+        for(int i = 0; i < References.regionSize; i++)
         {
-            GraphVertex vertex = new GraphVertex(i + 2);
+            GraphVertex vertex = new GraphVertex(i);
             regionGraph.AddVertex(vertex);
         }
 
@@ -211,12 +205,12 @@ public class Map : Spatial
 
     }
 
-    Vector2 checkNeighborsOne(int i, int j, int[,] map)
+    Vector2 checkNeighbors(int i, int j, int[,] map)
     {
         /*UP*/
         if(i - 1 >= 0)
         {
-            if(map[i - 1, j] == 1)
+            if(map[i - 1, j] == -1)
             {
                 return new Vector2(i-1,j);
             }
@@ -225,7 +219,7 @@ public class Map : Spatial
         /*LEFT*/
         if(j + 1 < References.chunkAmount)
         {
-            if(map[i, j + 1] == 1)
+            if(map[i, j + 1] == -1)
             {
                 return new Vector2(i,j+1);
             }
@@ -234,7 +228,7 @@ public class Map : Spatial
         /*DOWN*/
         if(i + 1 < References.chunkAmount)
         {
-            if(map[i + 1, j] == 1)
+            if(map[i + 1, j] == -1)
             {
                 return new Vector2(i+1,j);
             }
@@ -243,7 +237,7 @@ public class Map : Spatial
         /*RIGHT*/
         if(j - 1 >= 0)
         {
-            if(map[i, j - 1] == 1)
+            if(map[i, j - 1] == -1)
             {
                 return new Vector2(i,j-1);
             }
@@ -260,7 +254,10 @@ public class Map : Spatial
         {
             for(int j = 0; j < References.chunkAmount; j++)
             {
-                result += "[" + map[i,j] + "]";
+                if(map[i,j] < 0)
+                    result += "[" + map[i,j] + " ]";
+                else
+                    result += "[ " + map[i,j] + " ]";
             }
             GD.Print(result);
             result = "";

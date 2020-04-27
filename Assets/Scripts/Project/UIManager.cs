@@ -50,7 +50,7 @@ public class UIManager : Node
         References.chunkAmount = chunkAmount;
         References.walkableSlope = slope;
         References.forestChance = forestChance;
-        References.regions = regions;
+        References.regionSize = regions;
     }
 
 
@@ -87,15 +87,28 @@ public class UIManager : Node
     void SetInfoText()
     {
         string infoString = "";
-        string positionText = "Player Pos: " + References.player.Transform.origin.ToString("F2");
-        string regionText = "Player Region: " + References.player.Region;
-        infoString += positionText + "\n" + regionText;
+        string positionText = "Player Pos: " + References.player.Transform.origin.ToString("F2") + "\n";
+        string regionText = "Player Region: ";
+        string regionQuest = "Region Quest: ";
+
+        if(References.player.Region != null)
+        {
+            regionText += References.player.Region.number + "\n";
+            if(References.player.Region.quests != null)
+                regionQuest += References.player.Region.quests[0];
+            else
+                regionQuest += "No quest.";
+        }
+        else
+            regionText += "No region." + "\n";
+
+        infoString = positionText + regionText + regionQuest;
         infoText.BbcodeText = infoString;
     }
 
     public static Color IntToColor(int value, float alpha = 1)
     {   
-        float hue = (float)value / (float)References.regions + 5;
+        float hue = (float)value / (float)References.regionSize + 5;
         return Color.FromHsv(hue,1,1,alpha);
     }
 }

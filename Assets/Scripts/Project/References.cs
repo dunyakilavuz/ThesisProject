@@ -15,7 +15,7 @@ public class References : Node
     public static int steepness;
     public static int walkableSlope;
     public static int forestChance;
-    public static int regions;
+    public static int regionSize;
     public static int chunkAreaHeight;
     public static bool drawChunkBorders;
     public static OpenSimplexNoise noise;
