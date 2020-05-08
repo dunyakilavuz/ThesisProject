@@ -77,7 +77,7 @@ public class TerrainFactory : Node
                     MeshInstance border = chunkGrid[i,j].chunkBorders;
                     Color borderColor = UIManager.IntToColor(grid[i,j],1);
                     Paint(border,borderColor);
-                    chunkGrid[i,j].region = new Region(grid[i,j]);
+                    chunkGrid[i,j].region = References.map.regions[grid[i,j]];
                 }
             }
         }
@@ -118,7 +118,6 @@ public class TerrainFactory : Node
             {
                 Vector3 pos = new Vector3(chunks[i].position.x, chunks[i].avgHeight, chunks[i].position.z);
                 trees.Add(TreeGenerator(pos));
-                chunks[i].treeCount++;
             }
             
             rnd = Maths.RandomInt(0,100);
@@ -131,8 +130,6 @@ public class TerrainFactory : Node
                 Vector3 displacement = new Vector3(dispX,-0.5f,dispZ);
                 Quat rotation = new Quat(Vector3.Up, dispAngle * Maths.Deg2Rad);
                 boulders.Add(BoulderGenerator(pos + displacement,rotation));
-                chunks[i].boulderCount++;
-
             }
 
             rnd = Maths.RandomInt(0,100);
@@ -145,7 +142,6 @@ public class TerrainFactory : Node
                 Vector3 displacement = new Vector3(dispX,-0.5f,dispZ);
                 Quat rotation = new Quat(Vector3.Up, dispAngle * Maths.Deg2Rad);
                 grasses.Add(GrassGenerator(pos + displacement,rotation));
-                chunks[i].grassCount++;
             }
 
         }

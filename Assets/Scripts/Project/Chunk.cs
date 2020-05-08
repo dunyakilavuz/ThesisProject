@@ -9,12 +9,6 @@ public class Chunk : Spatial
     public float slope = 0;
     public Region region;
 
-
-    public int treeCount = 0;
-    public int grassCount = 0;
-    public int boulderCount = 0;
-
-
     PlaneMesh planeMesh;
     SurfaceTool surfaceTool;
     MeshDataTool meshDataTool;
@@ -24,7 +18,9 @@ public class Chunk : Spatial
 
     public MeshInstance chunkBorders;
     Area collisionArea;
-    int areaHeight;
+    
+    int chunkBorderHeight;
+    int collisionAreaHeight;
 
 
     public override void _Ready()
@@ -68,10 +64,9 @@ public class Chunk : Spatial
 
         chunkBorders = (MeshInstance)GetChild(0);
         collisionArea = (Area)GetChild(1);
-        areaHeight = References.chunkAreaHeight;
-    
-        chunkBorders.Scale = new Vector3(References.chunkSize * 0.5f,areaHeight,References.chunkSize * 0.5f);
-        collisionArea.Scale = new Vector3(References.chunkSize * 0.5f,areaHeight,References.chunkSize * 0.5f);
+        
+        chunkBorders.Scale = new Vector3(References.chunkSize * 0.5f, References.chunkBorderAreaHeight,References.chunkSize * 0.5f);
+        collisionArea.Scale = new Vector3(References.chunkSize * 0.5f,References.chunkCollisionAreaHeight,References.chunkSize * 0.5f);
     }
     public void Generate()
     {

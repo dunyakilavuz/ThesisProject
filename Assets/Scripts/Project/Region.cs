@@ -7,17 +7,17 @@ public class Region : Node
     public int number;
     List<Chunk> chunks;
     public List<Quest> quests;
-    float lightness = 1;
-    float visibility = 1;
-    float cover = 0;
-
-    int treeCount = 0;
-    int boulderCount = 0;
-    int grassCount = 0;
+    Properties properties;
+    Properties propertiesAfterQuest;
 
     public Region(int number)
     {
         this.number = number;
+        if(number > 0)
+        {
+            properties = new Properties();   
+            propertiesAfterQuest = new Properties(properties);
+        }
     }
 
     public void AddChunk(Chunk chunk)
@@ -26,43 +26,60 @@ public class Region : Node
             chunks = new List<Chunk>();
 
         chunks.Add(chunk);
-
-        treeCount += chunk.treeCount;
-        boulderCount += chunk.boulderCount;
-        grassCount += chunk.grassCount;
     }
 
     public void AddQuest(Quest quest)
     {
         if(quests == null)
             quests = new List<Quest>();
-        
+
         quests.Add(quest);
     }
 
-    public void CalcRegionProperties()
+    public bool Equals(Region region)
     {
-        if(chunks == null)
-        {
-            GD.Print("Region " + number + " is empty, no properties.");
-        }
+        if(this.number == region.number)
+            return true;
         else
-        {
-            lightness = 1 - ((float)treeCount / (float)chunks.Count);
-            visibility = 1 - ((float)grassCount / (float)chunks.Count);  
-            cover = (float)boulderCount / (float)chunks.Count;
-        }
+            return false;
     }
 
-    public void printRegion()
+    public Quest NextQuest()
     {
-        GD.Print("---");
-        GD.Print("Region number: " + number);
-        if(chunks != null)
-            GD.Print("Chunks: " + chunks.Count);
+        if(quests != null)
+            for(int i = 0; i < quests.Count; i++)
+                if(!quests[i].Done)
+                    return quests[i];
+        return null;
+    }
+
+    public void CompleteQuest()
+    {
+        if(NextQuest().Available())
+            NextQuest().Complete(this);
         else
-            GD.Print("Chunks: 0");
-        GD.Print("Lightness: " + lightness  + " , Visibility: " + visibility + " , Cover: " + cover);
-        GD.Print("---");
+            GD.Print("Could not complete quest.");
+    }
+    public void ClearQuests()
+    {
+        if(quests == null)
+            return;
+        
+        for(int i = 0; i < quests.Count; i++)
+        {
+            quests[i] = null;
+        }
+        quests.Clear();
+
+    }
+
+    public Properties Properties
+    {
+        get{return properties;}
+    }
+
+    public Properties PropertiesAfterQuest
+    {
+        get{return propertiesAfterQuest;}
     }
 }

@@ -4,17 +4,15 @@ using System;
 public class UIManager : Node
 {
     static string UIPath = "/root/MainScene/";
-    RichTextLabel infoText;
 
     public override void _Ready()
     {
-        infoText = (RichTextLabel)GetNode(UIPath + "UI/InfoPanel/InfoText");
         ReadInput();
     }
 
     public override void _Process(float delta)
     {
-        SetInfoText();
+        HandleInfo();
     }
 
     void ReadInput()
@@ -23,15 +21,15 @@ public class UIManager : Node
         string chunkSizeText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/ChSizeLine")).Text;
         string chunkAmountText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/ChAmountLine")).Text;
         string slopeText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/SlopeLine")).Text;
-        string forestText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/ForestLine")).Text;
         string regionText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/RegionLine")).Text;
+        string questsText = ((LineEdit)GetNode(UIPath + "UI/SettingsPanel/QuestsLine")).Text;
 
         int seed;
         int chunkSize;
         int chunkAmount;
         int slope;
-        int forestChance;
         int regions;
+        int questCount;
 
 
         if(seedText == "")
@@ -42,15 +40,15 @@ public class UIManager : Node
         Int32.TryParse(chunkSizeText, out chunkSize);
         Int32.TryParse(chunkAmountText, out chunkAmount);
         Int32.TryParse(slopeText, out slope);
-        Int32.TryParse(forestText, out forestChance);
         Int32.TryParse(regionText, out regions);
+        Int32.TryParse(questsText, out questCount);
 
         References.noise.Seed = seed;
         References.chunkSize = chunkSize;
         References.chunkAmount = chunkAmount;
         References.walkableSlope = slope;
-        References.forestChance = forestChance;
         References.regionSize = regions;
+        References.questCount = questCount;
     }
 
 
@@ -84,26 +82,52 @@ public class UIManager : Node
             References.questFactory.ClearQuests();
     }
 
-    void SetInfoText()
+    void HandleInfo()
     {
-        string infoString = "";
-        string positionText = "Player Pos: " + References.player.Transform.origin.ToString("F2") + "\n";
-        string regionText = "Player Region: ";
-        string regionQuest = "Region Quest: ";
+        ((LineEdit)GetNode(UIPath + "/UI/InfoPanel/PlayerPosLine")).Text = References.player.Transform.origin.ToString("F2");
+        ((Button)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/CompleteQuestButton")).Disabled = true;
+        ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/CompletedQuests")).BbcodeText = References.questFactory.CompletedQuestsSTR();
 
         if(References.player.Region != null)
         {
-            regionText += References.player.Region.number + "\n";
-            if(References.player.Region.quests != null)
-                regionQuest += References.player.Region.quests[0];
+            ((LineEdit)GetNode(UIPath + "/UI/InfoPanel/PlayerRegionLine")).Text = References.player.Region.number.ToString();
+
+            if(References.player.Region.quests != null && References.player.Region.quests.Count != 0)
+            {
+                if(References.player.Region.NextQuest() != null)
+                    ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/NextQuest")).BbcodeText = References.player.Region.NextQuest().ToString();
+                else
+                    ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/NextQuest")).BbcodeText = UIUtils.CenterText("-- No Quest --");
+                
+                if(References.player.Region.number != -1)
+                    if(References.player.Region.NextQuest() != null)
+                        if(References.player.Region.NextQuest().Available())
+                            ((Button)GetNode(UIPath + "UI/InfoPanel/QuestPanel/CompleteQuestButton")).Disabled = false;
+            }
             else
-                regionQuest += "No quest.";
+            {
+                ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/NextQuest")).BbcodeText = UIUtils.CenterText("-- No Quest --");
+            }
+
+            if(References.player.Region.Properties != null)
+            {
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress1")).Value = References.player.Region.Properties.Enemies;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress2")).Value = References.player.Region.Properties.Cover;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress3")).Value = References.player.Region.Properties.Resources;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress4")).Value = Convert.ToInt16(References.player.Region.Properties.EscortableNPC) * 10;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress5")).Value = Convert.ToInt16(References.player.Region.Properties.DeliverableNPC) * 10;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress6")).Value = Convert.ToInt16(References.player.Region.Properties.DefendableArea) * 10;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress7")).Value = Convert.ToInt16(References.player.Region.Properties.InteractableOBJ) * 10;
+            }
         }
         else
-            regionText += "No region." + "\n";
+        {
+            ((LineEdit)GetNode(UIPath + "/UI/InfoPanel/PlayerRegionLine")).Text = "-- No Region --";
+        }
 
-        infoString = positionText + regionText + regionQuest;
-        infoText.BbcodeText = infoString;
+        if(References.questFactory.AllCompleted())
+            ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/NextQuest")).BbcodeText = UIUtils.CenterText("-- All quests are completed! --");
+
     }
 
     public static Color IntToColor(int value, float alpha = 1)

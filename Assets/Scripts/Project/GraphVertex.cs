@@ -8,9 +8,9 @@ public class GraphVertex
     Region region;
     List<GraphVertex> connections;
 
-    public GraphVertex(int data)
+    public GraphVertex(Region region)
     {
-        this.data = data;
+        this.region = region;
         connections = new List<GraphVertex>();
     }
 
@@ -19,22 +19,22 @@ public class GraphVertex
         connections.Add(vert);
     }
 
-    public int Data
+    public bool Equals(GraphVertex vert)
     {
-        get
-        {
-            return data;
-        }
+        if(region == vert.region)
+            return true;
+        else
+            return false;
     }
 
-    public int Connections
+    public List<GraphVertex> Connections
     {
         get
         {
             if(connections == null)
-                return 0;
+                return null;
             else
-                return connections.Count;
+                return connections;
         }
     }
 
@@ -48,6 +48,6 @@ public class GraphVertex
 
     public override string ToString()
     {
-        return data.ToString(); 
+        return region.number.ToString(); 
     }
 }

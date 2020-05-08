@@ -49,6 +49,14 @@ public class Player : KinematicBody
         }
     }
 
+    public void CompleteQuest()
+    {
+        if(region != null)
+        {
+            region.CompleteQuest();
+        }
+    }
+
     void MovePlayer()
     {
         velocity = Vector3.Zero;

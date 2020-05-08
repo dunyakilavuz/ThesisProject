@@ -69,6 +69,7 @@
     <Compile Include="Assets\Scripts\Project\Edge.cs" />
     <Compile Include="Assets\Scripts\Project\Graph.cs" />
     <Compile Include="Assets\Scripts\Project\Quest.cs" />
+    <Compile Include="Assets\Scripts\Project\Properties.cs" />
     <Compile Include="Assets\Scripts\Project\GraphVertex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

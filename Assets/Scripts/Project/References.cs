@@ -14,9 +14,11 @@ public class References : Node
     public static int chunkAmount;
     public static int steepness;
     public static int walkableSlope;
-    public static int forestChance;
     public static int regionSize;
-    public static int chunkAreaHeight;
+    public static int forestChance;
+    public static int questCount;
+    public static int chunkBorderAreaHeight;
+    public static int chunkCollisionAreaHeight;
     public static bool drawChunkBorders;
     public static OpenSimplexNoise noise;
     public override void _Ready()
@@ -31,7 +33,9 @@ public class References : Node
         noise.Period = 100;
 
         steepness = 50;
-        chunkAreaHeight = 50;
+        chunkBorderAreaHeight = 30;
+        chunkCollisionAreaHeight = 100;
+        forestChance = 50;
 
     }
 

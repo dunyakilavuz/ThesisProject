@@ -132,15 +132,8 @@ public class Map : Spatial
             l++;
         }
 
-        for(int i = 0; i < regions.Length; i++)
-            regions[i].CalcRegionProperties();
-
         /*Print Results*/
         printGrid(grid);
-        
-        for(int i = 0; i < regions.Length; i++)
-            regions[i].printRegion();
-
     }
 
     void GenerateGraph()
@@ -153,7 +146,7 @@ public class Map : Spatial
         /*Add Vertices*/
         for(int i = 0; i < References.regionSize; i++)
         {
-            GraphVertex vertex = new GraphVertex(i);
+            GraphVertex vertex = new GraphVertex(regions[i]);
             regionGraph.AddVertex(vertex);
         }
 
@@ -162,47 +155,65 @@ public class Map : Spatial
         {
             for(int j = 0; j < mapSize; j++)
             {
-                GraphVertex A = new GraphVertex(grid[i,j]);
+                GraphVertex A;
                 GraphVertex B;
                 Edge edge;
 
-                /*UP*/
-                if(i - 1 >= 0)
-                {  
-                    B = new GraphVertex(grid[i - 1, j]);
-                    edge = new Edge(A,B);
-                    regionGraph.AddEdge(edge);
-                }
-
-                /*LEFT*/
-                if(j + 1 < References.chunkAmount)
+                if(grid[i,j] >= 0 && grid[i,j] < regions.Length)
                 {
-                    B = new GraphVertex(grid[i, j + 1]);
-                    edge = new Edge(A,B);
-                    regionGraph.AddEdge(edge);
-                }
+                    A = regionGraph.GetVertex(grid[i,j]);
+                    /*UP*/
+                    if(i - 1 >= 0)
+                    {  
+                        int value = grid[i - 1, j];
+                        if(value >= 0 && value < regions.Length)
+                        {
+                            B = regionGraph.GetVertex(value);
+                            edge = new Edge(A,B);
+                            regionGraph.AddEdge(edge);
+                        }
+                    }
 
-                /*DOWN*/
-                if(i + 1 < References.chunkAmount)
-                {
-                    B = new GraphVertex(grid[i + 1, j]);
-                    edge = new Edge(A,B);
-                    regionGraph.AddEdge(edge);
-                }
+                    /*LEFT*/
+                    if(j + 1 < References.chunkAmount)
+                    {
+                        int value = grid[i, j + 1];
+                        if(value >= 0 && value < regions.Length)
+                        {
+                            B = regionGraph.GetVertex(value);
+                            edge = new Edge(A,B);
+                            regionGraph.AddEdge(edge);
+                        }
+                    }
 
-                /*RIGHT*/
-                if(j - 1 >= 0)
-                {
-                    B = new GraphVertex(grid[i, j - 1]);
-                    edge = new Edge(A,B);
-                    regionGraph.AddEdge(edge);
-                }
+                    /*DOWN*/
+                    if(i + 1 < References.chunkAmount)
+                    {
+                        int value = grid[i + 1, j];
+                        if(value >= 0 && value < regions.Length)
+                        {
+                            B = regionGraph.GetVertex(value);
+                            edge = new Edge(A,B);
+                            regionGraph.AddEdge(edge);
+                        }
+                    }
 
+                    /*RIGHT*/
+                    if(j - 1 >= 0)
+                    {
+                        int value = grid[i, j - 1];
+                        if(value >= 0 && value < regions.Length)
+                        {
+                            B = regionGraph.GetVertex(value);
+                            edge = new Edge(A,B);
+                            regionGraph.AddEdge(edge);
+                        }
+                    }
+                }
             }
         }        
 
         regionGraph.PrintGraph();
-
     }
 
     Vector2 checkNeighbors(int i, int j, int[,] map)

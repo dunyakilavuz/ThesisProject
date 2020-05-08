@@ -19,23 +19,29 @@ public class Graph
             return true;
         }
 
-        bool exists = false;
         for(int i = 0; i < vertices.Count; i++)
         {
-            if(vertex.Data == vertices[i].Data)
+            if(vertex.Region.number == vertices[i].Region.number)
             {
-                exists = true;
-                break;
+                return false;
             }
         }
 
-        if(exists == false)
+        vertices.Add(vertex);
+        return true;
+    }
+
+    public GraphVertex GetVertex(int regionNumber)
+    {
+        if(vertices == null || vertices.Count == 0) 
+            return null;
+
+        for(int i = 0; i < vertices.Count; i++)
         {
-            vertices.Add(vertex);
-            return true;
+            if(regionNumber == vertices[i].Region.number)
+                return vertices[i];
         }
-        else
-            return false;
+        return null;
     }
 
     public bool AddEdge(Edge edge)
@@ -45,15 +51,10 @@ public class Graph
 
         if(edges.Count == 0)
         {
-            if(edge.A.Data >= 0 && edge.B.Data >= 0 && edge.A.Data != edge.B.Data)
+            if(edge.A.Region.number != edge.B.Region.number)
             {
-                for(int i = 0; i < vertices.Count; i++)
-                {
-                    if(vertices[i].Data == edge.A.Data)
-                        vertices[i].AddConnection(edge.B);
-                    if(vertices[i].Data == edge.B.Data)
-                        vertices[i].AddConnection(edge.A);
-                }
+                edge.A.AddConnection(edge.B);
+                edge.B.AddConnection(edge.A);
                 edges.Add(edge);
                 return true;
             }
@@ -63,34 +64,20 @@ public class Graph
             }
         }
 
-        bool discard = false;
         for(int i = 0; i < edges.Count; i++)
         {
-            if(
-            (edge.A.Data < 0 || edge.B.Data < 0) ||
-            (edge.A.Data == edge.B.Data) ||
-            ((edge.A.Data == edges[i].A.Data) && (edge.B.Data == edges[i].B.Data)) ||
-            ((edge.A.Data == edges[i].B.Data) && (edge.B.Data == edges[i].A.Data)))
+            if((edge.A.Region.number == edge.B.Region.number) ||
+            ((edge.A.Region.number == edges[i].A.Region.number) && (edge.B.Region.number == edges[i].B.Region.number)) ||
+            ((edge.A.Region.number == edges[i].B.Region.number) && (edge.B.Region.number == edges[i].A.Region.number)))
             {
-                discard = true;
-                break;
+                return false;
             }
         }
         
-        if(discard == false)
-        {
-            for(int i = 0; i < vertices.Count; i++)
-            {
-                if(vertices[i].Data == edge.A.Data)
-                    vertices[i].AddConnection(edge.B);
-                if(vertices[i].Data == edge.B.Data)
-                    vertices[i].AddConnection(edge.A);
-            }
-            edges.Add(edge);
-            return true;
-        }
-        else
-            return false;
+        edge.A.AddConnection(edge.B);
+        edge.B.AddConnection(edge.A);
+        edges.Add(edge);
+        return true;
     }
 
 
@@ -100,10 +87,10 @@ public class Graph
         int index = -1;
         for(int i = 0; i < vertices.Count; i++)
         {
-            if(vertices[i].Connections > max)
+            if(vertices[i].Connections.Count > max)
             {
                 index = i;
-                max = vertices[i].Connections;
+                max = vertices[i].Connections.Count;
             }
         }
 
@@ -120,12 +107,12 @@ public class Graph
 
         for(int i = 0; i < vertices.Count; i++)
         {
-            if(vertices[i].Connections != 0) // Not accepting 0 connections, because that kind of node is disconnected.
+            if(vertices[i].Connections.Count != 0) // Not accepting 0 connections, because that kind of node is disconnected.
             {
-                if(vertices[i].Connections < min)
+                if(vertices[i].Connections.Count < min)
                 {
                     index = i;
-                    min = vertices[i].Connections;
+                    min = vertices[i].Connections.Count;
                 }
             }
         }
@@ -142,7 +129,7 @@ public class Graph
 
         for(int i = 0; i < vertices.Count; i++)
         {
-            if(vertices[i].Connections == 0)
+            if(vertices[i].Connections.Count == 0)
                 index = i;
         }
 
@@ -158,7 +145,11 @@ public class Graph
     {
         GD.Print("\n--Region Graph--");
         GD.Print("Vertex Count: " + vertices.Count);
-        GD.Print("Edge Count:" + edges.Count);
+
+        if(edges != null)
+            GD.Print("Edge Count:" + edges.Count);
+        else
+            GD.Print("Edge Count: 0");
 
         string text = "V = {";
         for(int i = 0; i< vertices.Count; i++)
@@ -170,31 +161,33 @@ public class Graph
         GD.Print(text);
 
         text = "E = {";
-        for(int i = 0; i < edges.Count; i++)
+        if(edges != null)
         {
-            text += edges[i].A.Data + "-" + edges[i].B.Data + ", ";
+            for(int i = 0; i < edges.Count; i++)
+            {
+                text += edges[i].A.Region.number + "-" + edges[i].B.Region.number + ", ";
+            }
+            text = text.Remove(text.Length - 2, 1);  
         }
-        text = text.Remove(text.Length - 2, 1);  
         text += "}";
         GD.Print(text);
-
 
         GraphVertex mostConnected = MostConnected();
         GraphVertex leastConnected = LeastConnected();
         GraphVertex disconnected = Disconnected();
 
         if(mostConnected != null)
-            GD.Print("Most Connected Node: " + mostConnected.Data);
+            GD.Print("Most Connected Node: " + mostConnected.Region.number);
         else
             GD.Print("No most connected node found.");
 
         if(leastConnected != null)
-            GD.Print("Least Connected Node: " + leastConnected.Data);
+            GD.Print("Least Connected Node: " + leastConnected.Region.number);
         else
             GD.Print("No least connected node found.");
 
         if(disconnected != null)
-            GD.Print("Disconnected Node: " + disconnected.Data);
+            GD.Print("Disconnected Node: " + disconnected.Region.number);
         else
             GD.Print("No disconnected node found.");
     }

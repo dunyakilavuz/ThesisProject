@@ -2,17 +2,16 @@ using Godot;
 using System.Collections.Generic;
 public class Quest
 {
-    QuestType type;
-    QuestOption option;
+    public Type type;
+    public Option option;
     int identifier;
     bool done;
     List<Quest> prerequisite;
 
-    public Quest(QuestType type, QuestOption option, int identifier)
+    public Quest(Type type, Option option)
     {
         this.type = type;
         this.option = option;
-        this.identifier = identifier;
         this.done = false;
     }
 
@@ -26,47 +25,73 @@ public class Quest
 
     public bool Available()
     {
-        if(prerequisite != null)
-        {
-            for(int i = 0; i < prerequisite.Count; i++)
-            {
-                if(prerequisite[i].Done == false)
-                    return false;
-            }
-        }
+        if(!done)
+            if(prerequisite != null)
+                for(int i = 0; i < prerequisite.Count; i++)
+                    if(prerequisite[i].Done == false)
+                        return false;
         return true;
     }
 
-    public void Finish()
+    public void Complete(Region region)
     {
         if(Available())
+        {
+            OnComplete(region.Properties);
             done = true;
+        }
+    }
+
+    public void OnComplete(Properties properties)
+    {
+        if(type == Type.Kill)
+            properties.Enemies = 0;
+        if(type == Type.Deliver)
+            properties.DeliverableNPC = false;
+        if(type == Type.Escort)
+            properties.EscortableNPC = false;
+        if(type == Type.Gather)
+            properties.Resources = 0;
+        if(type == Type.DefendArea)
+        {
+            properties.DefendableArea = false;
+            properties.Enemies = 0;
+        }
+        if(type == Type.Interact)
+            properties.InteractableOBJ = false;
+    }
+
+    public bool Equals(Quest q)
+    {
+        if(this.type == q.type && this.option == q.option)
+            return true;
         else
-            GD.Print("Quest has prerequisite.");
+            return false;
     }
 
     public override string ToString()
     {
         string str = "--- Quest " + identifier + " ---\n";
-        if(option == QuestOption.NoOption)
-            str += "Objective: " + type.ToString() + ".";
+        if(option == Option.None)
+            str += "-- Objective --\n" + type.ToString() + ".";
         else
-            str += "Objective: " + type.ToString() + " with " + option.ToString() + ".";
+            str += "-- Objective --\n" + type.ToString() + " with " + option.ToString() + ".";
 
         str += "\n";
         if(Available())
-            str += "Quest available.";
+            str += "Quest available!";
         else
         {
-            str += "Prerequisite: Quests ";
+            str += "First complete quests:\n{";
             for(int i = 0; i < prerequisite.Count; i++)
             {
                 str += prerequisite[i].identifier;
                 if(i + 1 < prerequisite.Count)
                     str+= ",";
             }
+            str += "}";
         }
-        return str;
+        return UIUtils.CenterText(str);
     }
 
     public bool Done
@@ -81,8 +106,20 @@ public class Quest
         }
     }
 
+    public int ID
+    {
+        get
+        {
+            return identifier;
+        }
+        set
+        {
+            identifier = value;
+        }
+    }
 
-    public enum QuestType
+
+    public enum Type
     {
         Kill = 1,
         Deliver = 2,
@@ -92,9 +129,9 @@ public class Quest
         Interact = 6
     }
 
-    public enum QuestOption
+    public enum Option
     {
-        NoOption = 1,
+        None = 1,
         Stealth = 2
         
     }

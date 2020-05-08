@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://Assets/Scripts/Project/References.cs" type="Script" id=1]
 [ext_resource path="res://Assets/Scripts/Project/Player.cs" type="Script" id=2]
@@ -29,14 +29,26 @@ ground_horizon_color = Color( 0.462745, 0.666667, 0.803922, 1 )
 background_mode = 2
 background_sky = SubResource( 6 )
 
-[sub_resource type="DynamicFontData" id=8]
-font_path = "res://Assets/Fonts/helvetica.otf"
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0.180392, 0.168627, 0.168627, 1 )
 
-[sub_resource type="DynamicFont" id=9]
-size = 20
-use_mipmaps = true
-use_filter = true
-font_data = SubResource( 8 )
+[sub_resource type="StyleBoxFlat" id=9]
+bg_color = Color( 0.0745098, 0.627451, 0.956863, 1 )
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0.0745098, 0.545098, 0.956863, 1 )
+
+[sub_resource type="StyleBoxFlat" id=11]
+bg_color = Color( 0.282353, 0.282353, 0.282353, 1 )
+
+[sub_resource type="StyleBoxFlat" id=12]
+bg_color = Color( 0.117647, 0.615686, 0.913725, 1 )
+
+[sub_resource type="StyleBoxFlat" id=13]
+bg_color = Color( 0.262745, 0.486275, 0.776471, 1 )
+
+[sub_resource type="StyleBoxFlat" id=14]
+bg_color = Color( 0.2, 0.2, 0.2, 1 )
 
 [node name="MainScene" type="Node"]
 
@@ -208,38 +220,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ForestLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
-margin_left = 1.0
-margin_top = 228.0
-margin_right = 152.0
-margin_bottom = 259.0
-bbcode_enabled = true
-bbcode_text = "[center]Forest Density
-(Max: 100)"
-text = "Forest Density
-(Max: 100)"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ForestLine" type="LineEdit" parent="UI/SettingsPanel"]
-margin_top = 259.0
-margin_right = 153.0
-margin_bottom = 283.0
-focus_mode = 1
-text = "50"
-align = 1
-shortcut_keys_enabled = false
-selecting_enabled = false
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="RegionLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
 margin_left = 1.0
-margin_top = 287.0
+margin_top = 231.0
 margin_right = 152.0
-margin_bottom = 308.0
+margin_bottom = 252.0
 bbcode_enabled = true
 bbcode_text = "[center]Region Amount"
 text = "Region Amount"
@@ -248,9 +233,34 @@ __meta__ = {
 }
 
 [node name="RegionLine" type="LineEdit" parent="UI/SettingsPanel"]
-margin_top = 310.0
+margin_top = 254.0
 margin_right = 153.0
-margin_bottom = 334.0
+margin_bottom = 278.0
+focus_mode = 1
+text = "5"
+align = 1
+shortcut_keys_enabled = false
+selecting_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Quests" type="RichTextLabel" parent="UI/SettingsPanel"]
+margin_left = 1.0
+margin_top = 280.0
+margin_right = 152.0
+margin_bottom = 300.0
+bbcode_enabled = true
+bbcode_text = "[center]Quest Count"
+text = "Quest Count"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="QuestsLine" type="LineEdit" parent="UI/SettingsPanel"]
+margin_top = 300.0
+margin_right = 153.0
+margin_bottom = 324.0
 focus_mode = 1
 text = "5"
 align = 1
@@ -294,21 +304,302 @@ __meta__ = {
 
 [node name="InfoPanel" type="Panel" parent="UI"]
 anchor_right = 1.0
-margin_left = 697.0
-margin_right = 2.0
-margin_bottom = 88.0
+margin_left = 855.455
+margin_right = 2.45544
+margin_bottom = 600.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="InfoText" type="RichTextLabel" parent="UI/InfoPanel"]
-margin_right = 327.0
-margin_bottom = 88.0
-custom_fonts/normal_font = SubResource( 9 )
+[node name="PlayerPos" type="RichTextLabel" parent="UI/InfoPanel"]
+margin_top = 9.0
+margin_right = 169.0
+margin_bottom = 30.0
 bbcode_enabled = true
+bbcode_text = "[center]Player Position"
+text = "Player Position"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlayerPosLine" type="LineEdit" parent="UI/InfoPanel"]
+margin_top = 30.0
+margin_right = 169.0
+margin_bottom = 54.0
+custom_colors/font_color_uneditable = Color( 0.101961, 1, 0, 1 )
+align = 1
+editable = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlayerRegion" type="RichTextLabel" parent="UI/InfoPanel"]
+margin_top = 55.0
+margin_right = 169.0
+margin_bottom = 76.0
+bbcode_enabled = true
+bbcode_text = "[center]Player Region"
+text = "Player Region"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlayerRegionLine" type="LineEdit" parent="UI/InfoPanel"]
+margin_top = 73.0
+margin_right = 169.0
+margin_bottom = 97.0
+custom_colors/font_color_uneditable = Color( 0.101961, 1, 0, 1 )
+align = 1
+editable = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RegionQuest" type="RichTextLabel" parent="UI/InfoPanel"]
+margin_top = 101.0
+margin_right = 169.0
+margin_bottom = 122.0
+bbcode_enabled = true
+bbcode_text = "[center]Region Quest"
+text = "Region Quest"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="QuestPanel" type="Panel" parent="UI/InfoPanel"]
+margin_top = 119.0
+margin_right = 169.0
+margin_bottom = 274.0
+custom_styles/panel = SubResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NextQuest" type="RichTextLabel" parent="UI/InfoPanel/QuestPanel"]
+margin_top = -1.0
+margin_right = 168.0
+margin_bottom = 91.0
+custom_colors/default_color = Color( 0.956863, 0.921569, 0.0862745, 1 )
+bbcode_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CompletedQuests" type="RichTextLabel" parent="UI/InfoPanel/QuestPanel"]
+margin_top = 91.0
+margin_right = 168.0
+margin_bottom = 124.0
+custom_colors/default_color = Color( 0.956863, 0.921569, 0.0862745, 1 )
+bbcode_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CompleteQuestButton" type="Button" parent="UI/InfoPanel/QuestPanel"]
+margin_top = 124.0
+margin_right = 169.0
+margin_bottom = 155.0
+custom_styles/hover = SubResource( 9 )
+custom_styles/pressed = SubResource( 10 )
+custom_styles/disabled = SubResource( 11 )
+custom_styles/normal = SubResource( 12 )
+custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+disabled = true
+text = "Complete Quest"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RegionProperties" type="RichTextLabel" parent="UI/InfoPanel"]
+margin_top = 368.0
+margin_right = 169.0
+margin_bottom = 389.0
+bbcode_enabled = true
+bbcode_text = "[center]Region Properties"
+text = "Region Properties"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PropertiesPanel" type="Panel" parent="UI/InfoPanel"]
+margin_top = 389.0
+margin_right = 169.0
+margin_bottom = 599.0
+custom_styles/panel = SubResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label1" type="RichTextLabel" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 1.0
+margin_right = 168.0
+margin_bottom = 16.0
+custom_colors/default_color = Color( 0.388235, 0.533333, 0.435294, 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Enemies"
+text = "Enemies"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Progress1" type="ProgressBar" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 16.0
+margin_right = 168.0
+margin_bottom = 31.0
+custom_styles/fg = SubResource( 13 )
+custom_styles/bg = SubResource( 14 )
+max_value = 10.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="RichTextLabel" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 31.0
+margin_right = 168.0
+margin_bottom = 46.0
+custom_colors/default_color = Color( 0.388235, 0.533333, 0.435294, 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Cover"
+text = "Cover"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Progress2" type="ProgressBar" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 46.0
+margin_right = 168.0
+margin_bottom = 61.0
+custom_styles/fg = SubResource( 13 )
+custom_styles/bg = SubResource( 14 )
+max_value = 10.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="RichTextLabel" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 61.0
+margin_right = 168.0
+margin_bottom = 76.0
+custom_colors/default_color = Color( 0.388235, 0.533333, 0.435294, 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Resources"
+text = "Resources"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Progress3" type="ProgressBar" parent="UI/InfoPanel/PropertiesPanel"]
+margin_left = 0.237793
+margin_top = 76.0
+margin_right = 168.238
+margin_bottom = 91.0
+custom_styles/fg = SubResource( 13 )
+custom_styles/bg = SubResource( 14 )
+max_value = 10.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label4" type="RichTextLabel" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 91.0
+margin_right = 168.0
+margin_bottom = 106.0
+custom_colors/default_color = Color( 0.388235, 0.533333, 0.435294, 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Escııortable NPC"
+text = "Escııortable NPC"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Progress4" type="ProgressBar" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 106.0
+margin_right = 168.0
+margin_bottom = 121.0
+custom_styles/fg = SubResource( 13 )
+custom_styles/bg = SubResource( 14 )
+max_value = 10.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label5" type="RichTextLabel" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 121.0
+margin_right = 168.0
+margin_bottom = 136.0
+custom_colors/default_color = Color( 0.388235, 0.533333, 0.435294, 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Deliverable NPC"
+text = "Deliverable NPC"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Progress5" type="ProgressBar" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 136.0
+margin_right = 168.0
+margin_bottom = 151.0
+custom_styles/fg = SubResource( 13 )
+custom_styles/bg = SubResource( 14 )
+max_value = 10.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label6" type="RichTextLabel" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 151.0
+margin_right = 168.0
+margin_bottom = 166.0
+custom_colors/default_color = Color( 0.388235, 0.533333, 0.435294, 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Defendable Area"
+text = "Defendable Area"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Progress6" type="ProgressBar" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 166.0
+margin_right = 168.0
+margin_bottom = 181.0
+custom_styles/fg = SubResource( 13 )
+custom_styles/bg = SubResource( 14 )
+max_value = 10.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label7" type="RichTextLabel" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 181.0
+margin_right = 168.0
+margin_bottom = 196.0
+custom_colors/default_color = Color( 0.388235, 0.533333, 0.435294, 1 )
+bbcode_enabled = true
+bbcode_text = "[center]Interactable Object"
+text = "Interactable Object"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Progress7" type="ProgressBar" parent="UI/InfoPanel/PropertiesPanel"]
+margin_top = 196.0
+margin_right = 168.0
+margin_bottom = 211.0
+custom_styles/fg = SubResource( 13 )
+custom_styles/bg = SubResource( 14 )
+max_value = 10.0
+percent_visible = false
 __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="toggled" from="UI/SettingsPanel/TerrainButton" to="Main/UIManager" method="ToggleTerrain"]
 [connection signal="toggled" from="UI/SettingsPanel/BordersButton" to="Main/UIManager" method="ToggleBorders"]
 [connection signal="toggled" from="UI/SettingsPanel/QuestsButton" to="Main/UIManager" method="ToggleQuests"]
+[connection signal="button_up" from="UI/InfoPanel/QuestPanel/CompleteQuestButton" to="World/Player" method="CompleteQuest"]
