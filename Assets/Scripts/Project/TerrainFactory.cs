@@ -61,6 +61,7 @@ public class TerrainFactory : Node
                 chunks.Add(ChunkGenerator(position));
             }
         }
+        GD.Print("\n\n-- Generating Map --\n");
         GD.Print("Seed: " + References.noise.Seed);
         WaterGenerator();
         ForestGenerator();
@@ -81,7 +82,7 @@ public class TerrainFactory : Node
                 }
             }
         }
-
+        GD.Print("-- Completed Generating Map --");
     }
 
     void TerrainDestroyer()

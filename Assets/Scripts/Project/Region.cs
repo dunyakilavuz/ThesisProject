@@ -13,7 +13,7 @@ public class Region : Node
     public Region(int number)
     {
         this.number = number;
-        if(number > 0)
+        if(number >= 0)
         {
             properties = new Properties();   
             propertiesAfterQuest = new Properties(properties);
