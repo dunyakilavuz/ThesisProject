@@ -1,0 +1,6 @@
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\bin\ExportDebug\ThesisProject.dll
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\bin\ExportDebug\ThesisProject.pdb
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\obj\ExportDebug\ThesisProject.csprojAssemblyReference.cache
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\obj\ExportDebug\ThesisProject.csproj.CoreCompileInputs.cache
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\obj\ExportDebug\ThesisProject.dll
+C:\Users\Dunya\desktop\Workspace\ThesisProject\.mono\temp\obj\ExportDebug\ThesisProject.pdb

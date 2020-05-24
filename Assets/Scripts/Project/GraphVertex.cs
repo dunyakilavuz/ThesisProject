@@ -6,36 +6,22 @@ public class GraphVertex
 {  
     int data;
     Region region;
-    List<GraphVertex> connections;
+    public float distance;
+    public GraphVertex prev;
 
     public GraphVertex(Region region)
     {
         this.region = region;
-        connections = new List<GraphVertex>();
-    }
-
-    public void AddConnection(GraphVertex vert)
-    {
-        connections.Add(vert);
+        distance = Maths.INF;
+        prev = null;
     }
 
     public bool Equals(GraphVertex vert)
     {
-        if(region == vert.region)
+        if(region.Equals(vert.region))
             return true;
         else
             return false;
-    }
-
-    public List<GraphVertex> Connections
-    {
-        get
-        {
-            if(connections == null)
-                return null;
-            else
-                return connections;
-        }
     }
 
     public Region Region

@@ -7,7 +7,6 @@ public class Graph
     public List<GraphVertex> vertices;
     public List<Edge> edges;
 
-
     public bool AddVertex(GraphVertex vertex)
     {
         if(vertices == null)
@@ -53,8 +52,6 @@ public class Graph
         {
             if(edge.A.Region.number != edge.B.Region.number)
             {
-                edge.A.AddConnection(edge.B);
-                edge.B.AddConnection(edge.A);
                 edges.Add(edge);
                 return true;
             }
@@ -74,10 +71,93 @@ public class Graph
             }
         }
         
-        edge.A.AddConnection(edge.B);
-        edge.B.AddConnection(edge.A);
         edges.Add(edge);
         return true;
+    }
+
+    GraphVertex AStar(GraphVertex A, GraphVertex B)
+    {
+        List<GraphVertex> open = new List<GraphVertex>();
+        List<GraphVertex> closed = new List<GraphVertex>();
+        open.Add(A);
+        A.distance = 0;
+        GraphVertex current;
+        List<GraphVertex> neighbors;
+
+        while(open.Count > 0)
+        {
+            int min = MinList(open);
+            current = open[min];
+            neighbors = Neighbors(current);
+
+            if(current.Equals(B))
+                return B;
+
+            RemoveElement(open,current);
+            closed.Add(current);
+
+            for(int i = 0; i < neighbors.Count; i++)
+            {
+                if(!ContainsElement(closed,neighbors[i]))
+                {
+                    if(!ContainsElement(open,neighbors[i]))
+                    {
+                        float newDistance = current.distance + 1;
+
+                        if(neighbors[i].distance > newDistance)
+                        {
+                            open.Add(neighbors[i]);
+                            neighbors[i].distance = newDistance;
+                            neighbors[i].prev = current;
+                        }
+                    }
+
+                }
+
+            }
+        }
+        return null;
+    }
+
+    public List<GraphVertex> Path(GraphVertex A, GraphVertex B)
+    {
+        GraphVertex vert = AStar(A,B);
+
+        if(vert == null)
+        {
+            GD.Print("Path is unreachable.");
+            return null;
+        }
+
+        List<GraphVertex> path = new List<GraphVertex>();
+        GraphVertex current = vert;
+
+        while(true)
+        {
+            path.Add(current);
+
+            if(current.prev != null)
+                current = current.prev;
+            else
+                break;
+        }
+        path.Reverse();
+        PrintList(path);
+        return path;
+    }
+
+    public List<GraphVertex> Neighbors(GraphVertex A)
+    {
+        List<GraphVertex> neighbors = new List<GraphVertex>();
+
+        for(int i = 0; i < edges.Count; i++)
+        {
+            if(A.Equals(edges[i].A))
+                neighbors.Add(edges[i].B);
+            if(A.Equals(edges[i].B))
+                neighbors.Add(edges[i].A);
+        }
+        return neighbors;
     }
 
 
@@ -87,10 +167,10 @@ public class Graph
         int index = -1;
         for(int i = 0; i < vertices.Count; i++)
         {
-            if(vertices[i].Connections.Count > max)
+            if(Neighbors(vertices[i]).Count > max)
             {
                 index = i;
-                max = vertices[i].Connections.Count;
+                max = Neighbors(vertices[i]).Count;;
             }
         }
 
@@ -107,12 +187,12 @@ public class Graph
 
         for(int i = 0; i < vertices.Count; i++)
         {
-            if(vertices[i].Connections.Count != 0) // Not accepting 0 connections, because that kind of node is disconnected.
+            if(Neighbors(vertices[i]).Count != 0) // Not accepting 0 connections, because that kind of node is disconnected.
             {
-                if(vertices[i].Connections.Count < min)
+                if(Neighbors(vertices[i]).Count < min)
                 {
                     index = i;
-                    min = vertices[i].Connections.Count;
+                    min = Neighbors(vertices[i]).Count;
                 }
             }
         }
@@ -129,7 +209,7 @@ public class Graph
 
         for(int i = 0; i < vertices.Count; i++)
         {
-            if(vertices[i].Connections.Count == 0)
+            if(Neighbors(vertices[i]).Count == 0)
                 index = i;
         }
 
@@ -137,6 +217,69 @@ public class Graph
             return vertices[index];
         else
             return null;
+    }
+
+    void PrintList(List<GraphVertex> list)
+    {
+        if(list.Count == 0 || list == null)
+        {
+            GD.Print("List empty.");
+            return;
+        }
+
+        string listStr = "{";
+        for(int i = 0; i < list.Count; i++)
+        {
+            listStr += list[i].Region.number;
+            if(i + 1 < list.Count)
+                listStr += ",";
+            else
+                listStr += "}";
+        }
+        GD.Print(listStr);
+    }
+
+    int MinList(List<GraphVertex> list)
+    {
+        int index = -1;
+        float min = Maths.INF;
+
+        for(int i = 0; i < list.Count; i++)
+        {
+            if(list[i].distance < min)
+            {
+                min = list[i].distance;
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    bool ContainsElement(List<GraphVertex> list, GraphVertex element)
+    {
+        for(int i = 0; i < list.Count; i++)
+        {
+            if(list[i].Equals(element))
+                return true;
+        }
+        return false;
+    }
+
+    void RemoveElement(List<GraphVertex> list, GraphVertex element)
+    {
+        int index = -1;
+        for(int i = 0; i < list.Count; i++)
+        {
+            if(list[i].Equals(element))
+            {
+                index = i;
+            }
+        }
+
+        if(index != -1)
+        {
+            list.RemoveAt(index);
+        }
     }
 
 

@@ -20,125 +20,13 @@ public class QuestFactory : Node
 
     public void GenerateQuests()
     {
-        if(References.map == null)
-            return;
-        else
-            map = References.map;
-
-        if(givenQuests == null)
-            givenQuests = new List<Quest>();
-        if(regionTabuList == null)
-            regionTabuList = new List<Region>();
-
-        GraphVertex current = map.regionGraph.MostConnected();
-        GD.Print("\n-- Generating Quests --");
-        GD.Print("\nStarting with Region: " + current.Region.number);
-
-        Quest quest;
-        int questID = 1;
-        int iterations = 0;
-
-        while(true)
-        {
-            quest = GenerateQuest(current);
-            if(quest != null)
-            {
-                quest.ID = questID;
-                questID++;
-                quest.OnComplete(current.Region.PropertiesAfterQuest);
-                givenQuests.Add(quest);
-                current.Region.AddQuest(quest);
-                GD.Print("- Quest " + quest.ID + " assigned to Region: " + current.Region.number +
-                "  --  Tabu List Add Region: " + current.Region.number + " -");
-                regionTabuList.Add(current.Region);
-            }
-            else
-            {
-                GD.Print("Failed assigning quest.");
-            }
-
-            iterations++;
-
-            if(iterations > maxIter)
-            {
-                GD.Print("Max Iterations reached, breaking.");
-                break;
-            }
-
-            if(givenQuests.Count == References.questCount)
-            {
-                GD.Print("All quests are generated.");
-                break;
-            }
-
-            current = NextRegion(current);
-        }
-        GD.Print("\n-- Completed generating quests --");
+        map = References.map;
+        GraphVertex A = map.regionGraph.vertices[0];
+        GraphVertex B = map.regionGraph.vertices[5];
+        map.regionGraph.Path(A,B);
     }
 
-    GraphVertex NextRegion(GraphVertex currentVert)
-    {
-        int connectionCount = currentVert.Connections.Count;
-        string neighbors = "Neighbors of Region: " + currentVert.Region.number + "\t[";
-        for(int i = 0; i < connectionCount; i++)
-        {
-            neighbors += currentVert.Connections[i];
-            if(i + 1 < connectionCount)
-                neighbors += ",";
-            else
-                neighbors += "]";
-        }
-        GD.Print(neighbors);
-        int index = Maths.random.Next(connectionCount);
-        GraphVertex newVert = currentVert.Connections[index];
-        GD.Print("Picked a new Region: " + newVert.Region.number);
-        
-        bool equal = true;
-        int tabuCount = 0;
-
-        while(equal)
-        {
-            equal = false;
-            for(int i = 0; i < regionTabuList.Count; i++)
-            {
-                if(newVert.Region == regionTabuList[i])
-                {
-                    GD.Print("Region " + newVert.Region.number + " is in tabu list.");
-                    equal = true;
-                    break;
-                }
-            }
-
-            if(equal)
-            {
-                connectionCount = currentVert.Connections.Count;
-                neighbors = "Neighbors of Region: " + currentVert.Region.number + "\t [";
-                for(int i = 0; i < connectionCount; i++)
-                {
-                    neighbors += currentVert.Connections[i];
-                    if(i + 1 < connectionCount)
-                        neighbors += ",";
-                    else
-                        neighbors += "]";
-                }
-                GD.Print(neighbors);
-                index = Maths.random.Next(connectionCount);
-                newVert = currentVert.Connections[index];
-                GD.Print("Picked a new Region: " + newVert.Region.number);
-                tabuCount++;
-            }
-
-            if(tabuCount > tabuRemoveAfter)
-            {
-                tabuCount = 0;
-                GD.Print("- Tabu List Remove Region: " + regionTabuList[0].number + " -");
-                regionTabuList.RemoveAt(0);
-            }
-        }
-
-        return newVert;
-    }
-
+ 
     Quest GenerateQuest(GraphVertex vert)
     {
         Properties properties = vert.Region.PropertiesAfterQuest;
@@ -170,25 +58,25 @@ public class QuestFactory : Node
 
     Quest QuestDecision(Properties properties)
     {
-        List<Quest.Type> availableTypes = new List<Quest.Type>();
-        Quest.Type type;
+        List<Quest.Objective> availableTypes = new List<Quest.Objective>();
+        Quest.Objective type;
         Quest.Option option = Quest.Option.None;
 
         if(properties.Cover > 5 && properties.Enemies > 0)
             option = Quest.Option.Stealth;
 
         if(properties.DefendableArea)
-            availableTypes.Add(Quest.Type.DefendArea);
+            availableTypes.Add(Quest.Objective.DefendArea);
         if(properties.Enemies > 0)
-            availableTypes.Add(Quest.Type.Kill);
+            availableTypes.Add(Quest.Objective.Kill);
         if(properties.DeliverableNPC)
-            availableTypes.Add(Quest.Type.Deliver);
+            availableTypes.Add(Quest.Objective.Deliver);
         if(properties.Resources > 3)
-            availableTypes.Add(Quest.Type.Gather);
+            availableTypes.Add(Quest.Objective.Gather);
         if(properties.EscortableNPC)
-            availableTypes.Add(Quest.Type.Escort);
+            availableTypes.Add(Quest.Objective.Escort);
         if(properties.InteractableOBJ)
-            availableTypes.Add(Quest.Type.Interact);
+            availableTypes.Add(Quest.Objective.Interact);
 
         if(availableTypes.Count == 0)
             return null;

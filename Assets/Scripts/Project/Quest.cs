@@ -2,15 +2,15 @@ using Godot;
 using System.Collections.Generic;
 public class Quest
 {
-    public Type type;
+    public Objective objective;
     public Option option;
     int identifier;
     bool done;
     List<Quest> prerequisite;
 
-    public Quest(Type type, Option option)
+    public Quest(Objective objective, Option option)
     {
-        this.type = type;
+        this.objective = objective;
         this.option = option;
         this.done = false;
     }
@@ -44,26 +44,26 @@ public class Quest
 
     public void OnComplete(Properties properties)
     {
-        if(type == Type.Kill)
+        if(objective == Objective.Kill)
             properties.Enemies = 0;
-        if(type == Type.Deliver)
+        if(objective == Objective.Deliver)
             properties.DeliverableNPC = false;
-        if(type == Type.Escort)
+        if(objective == Objective.Escort)
             properties.EscortableNPC = false;
-        if(type == Type.Gather)
+        if(objective == Objective.Gather)
             properties.Resources = 0;
-        if(type == Type.DefendArea)
+        if(objective == Objective.DefendArea)
         {
             properties.DefendableArea = false;
             properties.Enemies = 0;
         }
-        if(type == Type.Interact)
+        if(objective == Objective.Interact)
             properties.InteractableOBJ = false;
     }
 
     public bool Equals(Quest q)
     {
-        if(this.type == q.type && this.option == q.option)
+        if(this.objective == q.objective && this.option == q.option)
             return true;
         else
             return false;
@@ -73,9 +73,9 @@ public class Quest
     {
         string str = "--- Quest " + identifier + " ---\n";
         if(option == Option.None)
-            str += "-- Objective --\n" + type.ToString() + ".";
+            str += "-- Objective --\n" + objective.ToString() + ".";
         else
-            str += "-- Objective --\n" + type.ToString() + " with " + option.ToString() + ".";
+            str += "-- Objective --\n" + objective.ToString() + " with " + option.ToString() + ".";
 
         str += "\n";
         if(Available())
@@ -119,7 +119,7 @@ public class Quest
     }
 
 
-    public enum Type
+    public enum Objective
     {
         Kill = 1,
         Deliver = 2,

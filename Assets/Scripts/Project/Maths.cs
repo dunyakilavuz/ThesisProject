@@ -4,6 +4,7 @@ using System;
 public class Maths
 {
     public static float PI = 3.14159265359f;
+    public static float INF = Mathf.Inf;
     public static Random random;
 
     public static float Lerp(float from, float to, float factor)
