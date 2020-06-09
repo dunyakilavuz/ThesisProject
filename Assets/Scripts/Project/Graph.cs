@@ -75,15 +75,62 @@ public class Graph
         return true;
     }
 
+    public GraphVertex[] RandomPath()
+    {
+        List<GraphVertex> vertexPool = new List<GraphVertex>();
+        GraphVertex A = null;
+        GraphVertex B = null;
+        List<GraphVertex> path = null;
+        int rnd;
+        int maxIter = 1000;
+        int iter = 0;
+        
+        while(iter < maxIter)
+        {
+            iter++;
+            for(int i = 0; i < vertices.Count; i++) // Fill the vertex pool.
+            {
+                vertexPool.Add(vertices[i]);
+            }
+
+            rnd = Maths.random.Next(vertexPool.Count);
+            A = vertexPool[rnd];
+            vertexPool.RemoveAt(rnd);
+            rnd = Maths.random.Next(vertexPool.Count);
+            B = vertexPool[rnd];
+            path = this.Path(A,B);
+
+            if(path != null)
+            {
+                return path.ToArray();
+            }
+            else
+            {
+                vertexPool.Clear();
+                A = null;
+                B = null;
+            }
+        }
+        GD.Print("Can't generate path.");
+        return null;
+    }
+
     GraphVertex AStar(GraphVertex A, GraphVertex B)
     {
         List<GraphVertex> open = new List<GraphVertex>();
         List<GraphVertex> closed = new List<GraphVertex>();
-        open.Add(A);
-        A.distance = 0;
         GraphVertex current;
         List<GraphVertex> neighbors;
 
+        for(int i = 0; i < vertices.Count; i++)
+        {
+            vertices[i].distance = Maths.INF;
+            vertices[i].prev = null;
+        }
+
+        open.Add(A);
+        A.distance = 0;
+        
         while(open.Count > 0)
         {
             int min = MinList(open);
@@ -125,7 +172,6 @@ public class Graph
 
         if(vert == null)
         {
-            GD.Print("Path is unreachable.");
             return null;
         }
 
@@ -142,11 +188,10 @@ public class Graph
                 break;
         }
         path.Reverse();
-        PrintList(path);
         return path;
     }
 
-    public List<GraphVertex> Neighbors(GraphVertex A)
+    List<GraphVertex> Neighbors(GraphVertex A)
     {
         List<GraphVertex> neighbors = new List<GraphVertex>();
 
@@ -219,7 +264,7 @@ public class Graph
             return null;
     }
 
-    void PrintList(List<GraphVertex> list)
+    public static void PrintList(List<GraphVertex> list)
     {
         if(list.Count == 0 || list == null)
         {

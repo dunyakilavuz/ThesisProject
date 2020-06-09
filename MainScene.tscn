@@ -259,7 +259,7 @@ margin_top = 300.0
 margin_right = 153.0
 margin_bottom = 324.0
 focus_mode = 1
-text = "8"
+text = "2"
 align = 1
 shortcut_keys_enabled = false
 selecting_enabled = false
@@ -357,8 +357,8 @@ margin_top = 101.0
 margin_right = 169.0
 margin_bottom = 122.0
 bbcode_enabled = true
-bbcode_text = "[center]Region Quest"
-text = "Region Quest"
+bbcode_text = "[center]Active Quests"
+text = "Active Quests"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -366,16 +366,15 @@ __meta__ = {
 [node name="QuestPanel" type="Panel" parent="UI/InfoPanel"]
 margin_top = 119.0
 margin_right = 169.0
-margin_bottom = 274.0
+margin_bottom = 335.0
 custom_styles/panel = SubResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="NextQuest" type="RichTextLabel" parent="UI/InfoPanel/QuestPanel"]
-margin_top = -1.0
-margin_right = 168.0
-margin_bottom = 91.0
+[node name="QuestInfo" type="RichTextLabel" parent="UI/InfoPanel/QuestPanel"]
+margin_right = 169.0
+margin_bottom = 162.0
 custom_colors/default_color = Color( 0.956863, 0.921569, 0.0862745, 1 )
 bbcode_enabled = true
 __meta__ = {
@@ -383,19 +382,19 @@ __meta__ = {
 }
 
 [node name="CompletedQuests" type="RichTextLabel" parent="UI/InfoPanel/QuestPanel"]
-margin_top = 91.0
-margin_right = 168.0
-margin_bottom = 124.0
+margin_top = 161.0
+margin_right = 169.0
+margin_bottom = 185.0
 custom_colors/default_color = Color( 0.956863, 0.921569, 0.0862745, 1 )
 bbcode_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CompleteQuestButton" type="Button" parent="UI/InfoPanel/QuestPanel"]
-margin_top = 124.0
+[node name="CompleteObjectiveButton" type="Button" parent="UI/InfoPanel/QuestPanel"]
+margin_top = 185.0
 margin_right = 169.0
-margin_bottom = 155.0
+margin_bottom = 216.0
 custom_styles/hover = SubResource( 9 )
 custom_styles/pressed = SubResource( 10 )
 custom_styles/disabled = SubResource( 11 )
@@ -403,7 +402,7 @@ custom_styles/normal = SubResource( 12 )
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 disabled = true
-text = "Complete Quest"
+text = "Complete Objective"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -599,4 +598,4 @@ __meta__ = {
 [connection signal="toggled" from="UI/SettingsPanel/TerrainButton" to="Main/UIManager" method="ToggleTerrain"]
 [connection signal="toggled" from="UI/SettingsPanel/BordersButton" to="Main/UIManager" method="ToggleBorders"]
 [connection signal="toggled" from="UI/SettingsPanel/QuestsButton" to="Main/UIManager" method="ToggleQuests"]
-[connection signal="button_up" from="UI/InfoPanel/QuestPanel/CompleteQuestButton" to="World/Player" method="CompleteQuest"]
+[connection signal="button_up" from="UI/InfoPanel/QuestPanel/CompleteObjectiveButton" to="World/Player" method="CompleteObjective"]

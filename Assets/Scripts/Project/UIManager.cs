@@ -85,48 +85,40 @@ public class UIManager : Node
     void HandleInfo()
     {
         ((LineEdit)GetNode(UIPath + "/UI/InfoPanel/PlayerPosLine")).Text = References.player.Transform.origin.ToString("F2");
-        ((Button)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/CompleteQuestButton")).Disabled = true;
+        ((Button)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/CompleteObjectiveButton")).Disabled = true;
         ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/CompletedQuests")).BbcodeText = References.questFactory.CompletedQuestsSTR();
 
         if(References.player.Region != null)
         {
+            if(References.player.Region.P1 != null)
+            {
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress1")).Value = References.player.Region.P1.Enemies;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress2")).Value = References.player.Region.P1.Cover;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress3")).Value = References.player.Region.P1.Resources;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress4")).Value = Convert.ToInt16(References.player.Region.P1.EscortableNPC) * 10;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress5")).Value = Convert.ToInt16(References.player.Region.P1.DeliverableNPC) * 10;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress6")).Value = Convert.ToInt16(References.player.Region.P1.DefendableArea) * 10;
+                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress7")).Value = Convert.ToInt16(References.player.Region.P1.InteractableOBJ) * 10;
+            }
+            
             ((LineEdit)GetNode(UIPath + "/UI/InfoPanel/PlayerRegionLine")).Text = References.player.Region.number.ToString();
 
-            if(References.player.Region.quests != null && References.player.Region.quests.Count != 0)
+            if(References.player.ActiveQuest != null)
             {
-                if(References.player.Region.NextQuest() != null)
-                    ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/NextQuest")).BbcodeText = References.player.Region.NextQuest().ToString();
-                else
-                    ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/NextQuest")).BbcodeText = UIUtils.CenterText("-- No Quest --");
-                
-                if(References.player.Region.number != -1)
-                    if(References.player.Region.NextQuest() != null)
-                        if(References.player.Region.NextQuest().Available())
-                            ((Button)GetNode(UIPath + "UI/InfoPanel/QuestPanel/CompleteQuestButton")).Disabled = false;
-            }
-            else
-            {
-                ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/NextQuest")).BbcodeText = UIUtils.CenterText("-- No Quest --");
-            }
-
-            if(References.player.Region.Properties != null)
-            {
-                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress1")).Value = References.player.Region.Properties.Enemies;
-                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress2")).Value = References.player.Region.Properties.Cover;
-                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress3")).Value = References.player.Region.Properties.Resources;
-                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress4")).Value = Convert.ToInt16(References.player.Region.Properties.EscortableNPC) * 10;
-                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress5")).Value = Convert.ToInt16(References.player.Region.Properties.DeliverableNPC) * 10;
-                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress6")).Value = Convert.ToInt16(References.player.Region.Properties.DefendableArea) * 10;
-                ((ProgressBar)GetNode(UIPath + "UI/InfoPanel/PropertiesPanel/Progress7")).Value = Convert.ToInt16(References.player.Region.Properties.InteractableOBJ) * 10;
+                ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/QuestInfo")).BbcodeText = UIUtils.CenterText(References.player.ActiveQuest.ToString());
+                if(References.player.ActiveQuest.ObjectiveAvailable(References.player.Region.number))
+                {
+                    ((Button)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/CompleteObjectiveButton")).Disabled = false;
+                }
             }
         }
         else
         {
             ((LineEdit)GetNode(UIPath + "/UI/InfoPanel/PlayerRegionLine")).Text = "-- No Region --";
-        }
+        }        
 
         if(References.questFactory.AllCompleted())
-            ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/NextQuest")).BbcodeText = UIUtils.CenterText("-- All quests are completed! --");
+            ((RichTextLabel)GetNode(UIPath + "/UI/InfoPanel/QuestPanel/QuestInfo")).BbcodeText = UIUtils.CenterText("-- All quests are completed! --");
 
     }
 

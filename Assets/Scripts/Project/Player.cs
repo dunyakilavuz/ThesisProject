@@ -1,5 +1,6 @@
 using Godot;
 using Vector3 = Godot.Vector3;
+using System.Collections.Generic;
 
 public class Player : KinematicBody
 {
@@ -14,6 +15,10 @@ public class Player : KinematicBody
     Vector2 mousePos = Vector2.Zero;
     Region region;
     Vector3 position;
+
+    List<Quest> quests;
+    List<Quest> completedQuests;
+    Quest activeQuest;
 
     public override void _Ready()
     {
@@ -41,6 +46,19 @@ public class Player : KinematicBody
         }
     }
 
+    public Quest ActiveQuest
+    {
+        get
+        {
+            return activeQuest;
+        }
+
+        set
+        {
+            activeQuest = value;
+        }
+    }
+
     public Vector3 Position
     {
         get
@@ -49,12 +67,42 @@ public class Player : KinematicBody
         }
     }
 
-    public void CompleteQuest()
+    public void AcceptQuest(Quest q)
     {
-        if(region != null)
+        if(quests == null)
+            quests = new List<Quest>();
+        quests.Add(q);
+
+        if(activeQuest == null)
+            activeQuest = quests[0];
+    }
+
+    public void CompleteObjective()
+    {
+        activeQuest.CompleteObjective(region.number);
+
+        if(activeQuest.Done)
         {
-            region.CompleteQuest();
+            quests.Remove(activeQuest);
+
+            if(completedQuests == null)
+                completedQuests = new List<Quest>();
+
+            completedQuests.Add(activeQuest);
+
+            if(quests.Count > 0)
+                activeQuest = quests[0];
         }
+    }
+
+    public void ClearQuests()
+    {
+        activeQuest = null;
+
+        if(quests != null)
+            quests.Clear();
+        if(completedQuests != null)
+            completedQuests.Clear();
     }
 
     void MovePlayer()

@@ -6,17 +6,16 @@ public class Region : Node
 {
     public int number;
     List<Chunk> chunks;
-    public List<Quest> quests;
-    Properties properties;
-    Properties propertiesAfterQuest;
+    Properties p0;
+    Properties p1;
 
     public Region(int number)
     {
         this.number = number;
         if(number >= 0)
         {
-            properties = new Properties();   
-            propertiesAfterQuest = new Properties(properties);
+            p0 = new Properties();   
+            p1 = new Properties(p0);
         }
     }
 
@@ -28,14 +27,6 @@ public class Region : Node
         chunks.Add(chunk);
     }
 
-    public void AddQuest(Quest quest)
-    {
-        if(quests == null)
-            quests = new List<Quest>();
-
-        quests.Add(quest);
-    }
-
     public bool Equals(Region region)
     {
         if(this.number == region.number)
@@ -44,42 +35,13 @@ public class Region : Node
             return false;
     }
 
-    public Quest NextQuest()
+    public Properties P0
     {
-        if(quests != null)
-            for(int i = 0; i < quests.Count; i++)
-                if(!quests[i].Done)
-                    return quests[i];
-        return null;
+        get{return p0;}
     }
 
-    public void CompleteQuest()
+    public Properties P1
     {
-        if(NextQuest().Available())
-            NextQuest().Complete(this);
-        else
-            GD.Print("Could not complete quest.");
-    }
-    public void ClearQuests()
-    {
-        if(quests == null)
-            return;
-        
-        for(int i = 0; i < quests.Count; i++)
-        {
-            quests[i] = null;
-        }
-        quests.Clear();
-
-    }
-
-    public Properties Properties
-    {
-        get{return properties;}
-    }
-
-    public Properties PropertiesAfterQuest
-    {
-        get{return propertiesAfterQuest;}
+        get{return p1;}
     }
 }

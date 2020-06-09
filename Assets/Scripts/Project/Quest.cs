@@ -2,68 +2,106 @@ using Godot;
 using System.Collections.Generic;
 public class Quest
 {
-    public Objective objective;
-    public Option option;
+    public GraphVertex[] path;
+    public Objective[] objectives;
+    public Option[] options;
     int identifier;
     bool done;
-    List<Quest> prerequisite;
+    int index = 0;
 
-    public Quest(Objective objective, Option option)
+    public Quest(GraphVertex[] path, Objective[] objectives, Option[] options, int identifier)
     {
-        this.objective = objective;
-        this.option = option;
+        this.path = path;
+        this.objectives = objectives;
+        this.options = options;
+        this.identifier = identifier;
         this.done = false;
+        this.index = 0;
     }
 
-    public void AddPrerequisite(Quest q)
+    public void CompleteObjective(int regionNumber)
     {
-        if(prerequisite == null)
-            prerequisite = new List<Quest>();
-        
-        prerequisite.Add(q);
-    }
-
-    public bool Available()
-    {
-        if(!done)
-            if(prerequisite != null)
-                for(int i = 0; i < prerequisite.Count; i++)
-                    if(prerequisite[i].Done == false)
-                        return false;
-        return true;
-    }
-
-    public void Complete(Region region)
-    {
-        if(Available())
+        if(ObjectiveAvailable(regionNumber))
         {
-            OnComplete(region.Properties);
-            done = true;
+            OnComplete(path[index].Region.P1, index);
+            objectives[index] = Objective.Complete;
+            index++;
         }
+
+        if(index == objectives.Length)
+        {
+            CompleteQuest();
+            index = 0;
+        }
+
     }
 
-    public void OnComplete(Properties properties)
+    public bool ObjectiveAvailable(int regionNumber)
+    {   
+        int progress = -1;
+
+        for(int i = 0; i < path.Length; i++)
+        {
+            if(path[i].Region.number == regionNumber)
+                progress = i;
+        }
+
+        if(progress > -1)
+        {
+            if(path[index].Region.number == regionNumber)
+            {
+                if(index == progress)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public bool CompleteQuest()
     {
-        if(objective == Objective.Kill)
+        bool allDone = false;
+
+        for(int i = 0; i < objectives.Length; i++)
+        {
+            if(objectives[i] == Objective.Complete || objectives[i] == Objective.None)
+            {
+                allDone = true;
+            }
+        }
+
+        if(allDone)
+        {
+            this.done = true;
+        }
+
+        return allDone;
+    }
+
+    void OnComplete(Properties properties, int index)
+    {
+        //Update region properties as objective is finished.
+        if(objectives[index] == Objective.Kill)
             properties.Enemies = 0;
-        if(objective == Objective.Deliver)
+        if(objectives[index] == Objective.Deliver)
             properties.DeliverableNPC = false;
-        if(objective == Objective.Escort)
+        if(objectives[index] == Objective.Escort)
             properties.EscortableNPC = false;
-        if(objective == Objective.Gather)
+        if(objectives[index] == Objective.Gather)
             properties.Resources = 0;
-        if(objective == Objective.DefendArea)
+        if(objectives[index] == Objective.DefendArea)
         {
             properties.DefendableArea = false;
             properties.Enemies = 0;
         }
-        if(objective == Objective.Interact)
+        if(objectives[index] == Objective.Interact)
             properties.InteractableOBJ = false;
     }
 
     public bool Equals(Quest q)
     {
-        if(this.objective == q.objective && this.option == q.option)
+        if(identifier == q.identifier)
             return true;
         else
             return false;
@@ -72,26 +110,31 @@ public class Quest
     public override string ToString()
     {
         string str = "--- Quest " + identifier + " ---\n";
-        if(option == Option.None)
-            str += "-- Objective --\n" + objective.ToString() + ".";
-        else
-            str += "-- Objective --\n" + objective.ToString() + " with " + option.ToString() + ".";
-
-        str += "\n";
-        if(Available())
-            str += "Quest available!";
-        else
+        str += "Path: {";
+        for(int i = 0; i < path.Length; i++)
         {
-            str += "First complete quests:\n{";
-            for(int i = 0; i < prerequisite.Count; i++)
-            {
-                str += prerequisite[i].identifier;
-                if(i + 1 < prerequisite.Count)
-                    str+= ",";
-            }
-            str += "}";
+            str += path[i].Region.number;
+            if(i + 1 < path.Length)
+                str += ",";
+            else
+                str += "}\n";
         }
-        return UIUtils.CenterText(str);
+
+
+        str += "-- Objectives -- \n";
+        for(int i = 0; i < path.Length; i++)
+        {
+            if(options[i] != Option.None)
+                str += "*" + objectives[i].ToString() + " with "+ options[i] + " at Region " + path[i].Region.number;
+            else
+                str += "*" + objectives[i].ToString() + " at Region " + path[i].Region.number;
+            if(i + 1 < path.Length)
+                str += "\n";
+            else
+                str += "";
+        }
+
+        return str;
     }
 
     public bool Done
@@ -121,12 +164,14 @@ public class Quest
 
     public enum Objective
     {
+        None = 0,
         Kill = 1,
         Deliver = 2,
         Escort = 3,
         Gather = 4,
         DefendArea = 5,
-        Interact = 6
+        Interact = 6,
+        Complete = 7
     }
 
     public enum Option

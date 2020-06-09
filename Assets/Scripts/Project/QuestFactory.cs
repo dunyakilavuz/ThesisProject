@@ -3,7 +3,8 @@ using System.Collections.Generic;
 public class QuestFactory : Node
 {
     Map map;
-    List<Quest> givenQuests;
+    Graph graph;
+    List<Quest> quests;
     List<Region> regionTabuList;
     int tabuRemoveAfter = 2;
     int maxIter = 5000;
@@ -21,86 +22,103 @@ public class QuestFactory : Node
     public void GenerateQuests()
     {
         map = References.map;
-        GraphVertex A = map.regionGraph.vertices[0];
-        GraphVertex B = map.regionGraph.vertices[5];
-        map.regionGraph.Path(A,B);
+        graph = map.regionGraph;
+        
+        if(quests == null)
+            quests = new List<Quest>();
+        
+        int index = 0;
+        while(index < References.questCount)
+        {
+            Quest q = GenerateQuest(graph.RandomPath(), index + 1);
+            quests.Add(q);
+            References.player.AcceptQuest(q);
+            index++;
+        }
     }
 
  
-    Quest GenerateQuest(GraphVertex vert)
+    Quest GenerateQuest(GraphVertex[] path, int index)
     {
-        Properties properties = vert.Region.PropertiesAfterQuest;
-        if(vert == null)
+        if(path == null)
         {
-            GD.Print("Vertex is null, returning.");
+            GD.Print("Path is null, returning.");
             return null;
         }
 
-        if(properties == null)
-        {
-            GD.Print("Properties are null, returning.");   
-            return null;
-        }
-            
-        Quest quest = QuestDecision(properties);
+        Properties properties;
+        Quest.Objective[] objectives = new Quest.Objective[path.Length];
+        Quest.Option[] options = new Quest.Option[path.Length];
 
-        if(quest == null)
+        for(int i = 0; i < path.Length; i++)
         {
-            GD.Print("No eligible quests found for Region: " + vert.Region.number);
-            return null;
+            properties = path[i].Region.P0;
+            objectives[i] = GenerateObjective(properties);
+            options[i] = GenerateOption(properties);
         }
 
-        for(int i = 0; i < givenQuests.Count; i++)
-            quest.AddPrerequisite(givenQuests[i]);
+        Quest quest = new Quest(path,objectives,options,index);
 
+        quests.Add(quest);
         return quest;
     }
 
-    Quest QuestDecision(Properties properties)
+    Quest.Objective GenerateObjective(Properties properties)
     {
-        List<Quest.Objective> availableTypes = new List<Quest.Objective>();
-        Quest.Objective type;
+        List<Quest.Objective> availableObjectives = new List<Quest.Objective>();
+        Quest.Objective obj = Quest.Objective.None;
+
+        if(properties == null)
+            return obj;
+
+        if(properties.DefendableArea)
+            availableObjectives.Add(Quest.Objective.DefendArea);
+        if(properties.Enemies > 0)
+            availableObjectives.Add(Quest.Objective.Kill);
+        if(properties.DeliverableNPC)
+            availableObjectives.Add(Quest.Objective.Deliver);
+        if(properties.Resources > 3)
+            availableObjectives.Add(Quest.Objective.Gather);
+        if(properties.EscortableNPC)
+            availableObjectives.Add(Quest.Objective.Escort);
+        if(properties.InteractableOBJ)
+            availableObjectives.Add(Quest.Objective.Interact);
+
+        if(availableObjectives.Count == 0)
+            return obj;
+                
+        int selection = Maths.random.Next(availableObjectives.Count);
+        obj = availableObjectives[selection];
+
+        return obj;
+    }
+
+    Quest.Option GenerateOption(Properties properties)
+    {
         Quest.Option option = Quest.Option.None;
+
+        if(properties == null)
+            return option;
 
         if(properties.Cover > 5 && properties.Enemies > 0)
             option = Quest.Option.Stealth;
 
-        if(properties.DefendableArea)
-            availableTypes.Add(Quest.Objective.DefendArea);
-        if(properties.Enemies > 0)
-            availableTypes.Add(Quest.Objective.Kill);
-        if(properties.DeliverableNPC)
-            availableTypes.Add(Quest.Objective.Deliver);
-        if(properties.Resources > 3)
-            availableTypes.Add(Quest.Objective.Gather);
-        if(properties.EscortableNPC)
-            availableTypes.Add(Quest.Objective.Escort);
-        if(properties.InteractableOBJ)
-            availableTypes.Add(Quest.Objective.Interact);
-
-        if(availableTypes.Count == 0)
-            return null;
-                
-        int selection = Maths.random.Next(availableTypes.Count);
-        type = availableTypes[selection];
-
-        return new Quest(type,option);
+        return option;
     }
-
-
 
     public string CompletedQuestsSTR()
     {
-        if(givenQuests != null)
+        if(quests != null)
         {
             string completed = "Completed Quests: {";
-            for(int i = 0; i < givenQuests.Count; i++)
+            for(int i = 0; i < quests.Count; i++)
             {
-                if(givenQuests[i].Done)
-                    completed += givenQuests[i].ID;
-                if(i + 1 < givenQuests.Count)
-                    if(givenQuests[i + 1].Done)
+                if(quests[i].Done)
+                    completed += quests[i].ID;
+                if(i + 1 < quests.Count)
+                    if(quests[i + 1].Done)
                         completed += ",";
+
             }
             completed += "}";
             return UIUtils.CenterText(completed);
@@ -110,11 +128,11 @@ public class QuestFactory : Node
 
     public bool AllCompleted()
     {
-        if(givenQuests != null)
+        if(quests != null)
         {
             bool allCompleted = true;
-            for(int i = 0; i < givenQuests.Count; i++)
-                if(!givenQuests[i].Done)
+            for(int i = 0; i < quests.Count; i++)
+                if(!quests[i].Done)
                     allCompleted = false;
             return allCompleted;
         }
@@ -129,16 +147,10 @@ public class QuestFactory : Node
         if(References.map.gridChunk == null)
             return;
         
-        if(givenQuests == null)
+        if(quests == null)
             return;
 
-        for(int i = 0; i < References.chunkAmount; i++)
-        {
-            for(int j = 0; j < References.chunkAmount; j++)
-            {
-                References.map.gridChunk[i,j].region.ClearQuests();
-            }
-        }
-        givenQuests.Clear();
+        References.player.ClearQuests();
+        quests.Clear();
     }
 }

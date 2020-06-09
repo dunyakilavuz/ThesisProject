@@ -12,8 +12,6 @@ public class GraphVertex
     public GraphVertex(Region region)
     {
         this.region = region;
-        distance = Maths.INF;
-        prev = null;
     }
 
     public bool Equals(GraphVertex vert)
