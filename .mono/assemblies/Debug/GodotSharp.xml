@@ -373,6 +373,7 @@
             <para>It is only called if input processing is enabled, which is done automatically if this method is overridden, and can be toggled with <see cref="M:Godot.Node.SetProcessInput(System.Boolean)"/>.</para>
             <para>To consume the input event and stop it propagating further to other nodes, <see cref="M:Godot.SceneTree.SetInputAsHandled"/> can be called.</para>
             <para>For gameplay input, <see cref="M:Godot.Node._UnhandledInput(Godot.InputEvent)"/> and <see cref="M:Godot.Node._UnhandledKeyInput(Godot.InputEventKey)"/> are usually a better fit as they allow the GUI to intercept the events first.</para>
+            <para>Note: This method is only called if the node is present in the scene tree (i.e. if it's not orphan).</para>
             </summary>
         </member>
         <member name="M:Godot.Node._PhysicsProcess(System.Single)">
@@ -380,6 +381,7 @@
             <para>Called during the physics processing step of the main loop. Physics processing means that the frame rate is synced to the physics, i.e. the <c>delta</c> variable should be constant.</para>
             <para>It is only called if physics processing is enabled, which is done automatically if this method is overridden, and can be toggled with <see cref="M:Godot.Node.SetPhysicsProcess(System.Boolean)"/>.</para>
             <para>Corresponds to the  notification in <see cref="M:Godot.Object._Notification(System.Int32)"/>.</para>
+            <para>Note: This method is only called if the node is present in the scene tree (i.e. if it's not orphan).</para>
             </summary>
         </member>
         <member name="M:Godot.Node._Process(System.Single)">
@@ -387,6 +389,7 @@
             <para>Called during the processing step of the main loop. Processing happens at every frame and as fast as possible, so the <c>delta</c> time since the previous frame is not constant.</para>
             <para>It is only called if processing is enabled, which is done automatically if this method is overridden, and can be toggled with <see cref="M:Godot.Node.SetProcess(System.Boolean)"/>.</para>
             <para>Corresponds to the  notification in <see cref="M:Godot.Object._Notification(System.Int32)"/>.</para>
+            <para>Note: This method is only called if the node is present in the scene tree (i.e. if it's not orphan).</para>
             </summary>
         </member>
         <member name="M:Godot.Node._Ready">
@@ -403,6 +406,7 @@
             <para>It is only called if unhandled input processing is enabled, which is done automatically if this method is overridden, and can be toggled with <see cref="M:Godot.Node.SetProcessUnhandledInput(System.Boolean)"/>.</para>
             <para>To consume the input event and stop it propagating further to other nodes, <see cref="M:Godot.SceneTree.SetInputAsHandled"/> can be called.</para>
             <para>For gameplay input, this and <see cref="M:Godot.Node._UnhandledKeyInput(Godot.InputEventKey)"/> are usually a better fit than <see cref="M:Godot.Node._Input(Godot.InputEvent)"/> as they allow the GUI to intercept the events first.</para>
+            <para>Note: This method is only called if the node is present in the scene tree (i.e. if it's not orphan).</para>
             </summary>
         </member>
         <member name="M:Godot.Node._UnhandledKeyInput(Godot.InputEventKey)">
@@ -411,6 +415,7 @@
             <para>It is only called if unhandled key input processing is enabled, which is done automatically if this method is overridden, and can be toggled with <see cref="M:Godot.Node.SetProcessUnhandledKeyInput(System.Boolean)"/>.</para>
             <para>To consume the input event and stop it propagating further to other nodes, <see cref="M:Godot.SceneTree.SetInputAsHandled"/> can be called.</para>
             <para>For gameplay input, this and <see cref="M:Godot.Node._UnhandledInput(Godot.InputEvent)"/> are usually a better fit than <see cref="M:Godot.Node._Input(Godot.InputEvent)"/> as they allow the GUI to intercept the events first.</para>
+            <para>Note: This method is only called if the node is present in the scene tree (i.e. if it's not orphan).</para>
             </summary>
         </member>
         <member name="M:Godot.Node.AddChildBelowNode(Godot.Node,Godot.Node,System.Boolean)">
@@ -489,7 +494,7 @@
         </member>
         <member name="M:Godot.Node.GetParent">
             <summary>
-            <para>Returns the parent node of the current node, or an empty <see cref="T:Godot.Node"/> if the node lacks a parent.</para>
+            <para>Returns the parent node of the current node, or a <c>null instance</c> if the node lacks a parent.</para>
             </summary>
         </member>
         <member name="M:Godot.Node.FindNode(System.String,System.Boolean,System.Boolean)">
@@ -859,6 +864,7 @@
             print("position" in n) # Prints "True".
             print("other_property" in n) # Prints "False".
             </code></para>
+            <para>The <c>in</c> operator will evaluate to <c>true</c> as long as the key exists, even if the value is <c>null</c>.</para>
             <para>Objects also receive notifications. Notifications are a simple way to notify the object about different events, so they can all be handled together. See <see cref="M:Godot.Object._Notification(System.Int32)"/>.</para>
             </summary>
         </member>
@@ -948,7 +954,7 @@
         </member>
         <member name="M:Godot.Object.Free">
             <summary>
-            <para>Deletes the object from memory. Any pre-existing reference to the freed object will now return <c>null</c>.</para>
+            <para>Deletes the object from memory. Any pre-existing reference to the freed object will become invalid, e.g. <c>is_instance_valid(object)</c> will return <c>false</c>.</para>
             </summary>
         </member>
         <member name="M:Godot.Object.GetClass">
@@ -4474,7 +4480,8 @@
         </member>
         <member name="M:Godot.AStar.GetClosestPoint(Godot.Vector3,System.Boolean)">
             <summary>
-            <para>Returns the ID of the closest point to <c>to_position</c>, optionally taking disabled points into account. Returns -1 if there are no points in the points pool.</para>
+            <para>Returns the ID of the closest point to <c>to_position</c>, optionally taking disabled points into account. Returns <c>-1</c> if there are no points in the points pool.</para>
+            <para>Note: If several points are the closest to <c>to_position</c>, the one with the smallest ID will be returned, ensuring a deterministic result.</para>
             </summary>
         </member>
         <member name="M:Godot.AStar.GetClosestPositionInSegment(Godot.Vector3)">
@@ -4652,7 +4659,8 @@
         </member>
         <member name="M:Godot.AStar2D.GetClosestPoint(Godot.Vector2,System.Boolean)">
             <summary>
-            <para>Returns the ID of the closest point to <c>to_position</c>, optionally taking disabled points into account. Returns -1 if there are no points in the points pool.</para>
+            <para>Returns the ID of the closest point to <c>to_position</c>, optionally taking disabled points into account. Returns <c>-1</c> if there are no points in the points pool.</para>
+            <para>Note: If several points are the closest to <c>to_position</c>, the one with the smallest ID will be returned, ensuring a deterministic result.</para>
             </summary>
         </member>
         <member name="M:Godot.AStar2D.GetClosestPositionInSegment(Godot.Vector2)">
@@ -6207,6 +6215,11 @@
             <para>Shifts position in the animation timeline and immediately updates the animation. <c>delta</c> is the time in seconds to shift. Events between the current frame and <c>delta</c> are handled.</para>
             </summary>
         </member>
+        <member name="T:Godot.AnimationTree">
+            <summary>
+            <para>Note: When linked with an <see cref="T:Godot.AnimationPlayer"/>, several properties and methods of the corresponding <see cref="T:Godot.AnimationPlayer"/> will not function as expected. Playback and transitions should be handled using only the <see cref="T:Godot.AnimationTree"/> and its constituent <see cref="T:Godot.AnimationNode"/>(s). The <see cref="T:Godot.AnimationPlayer"/> node should be used solely for adding, deleting, and editing animations.</para>
+            </summary>
+        </member>
         <member name="F:Godot.AnimationTree.AnimationProcessMode.Physics">
             <summary>
             <para>The animations will progress during the physics frame (i.e. <see cref="M:Godot.Node._PhysicsProcess(System.Single)"/>).</para>
@@ -6240,6 +6253,17 @@
         <member name="P:Godot.AnimationTree.ProcessMode">
             <summary>
             <para>The process mode of this <see cref="T:Godot.AnimationTree"/>. See <see cref="T:Godot.AnimationTree.AnimationProcessMode"/> for available modes.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.AnimationTree.RootMotionTrack">
+            <summary>
+            <para>The path to the Animation track used for root motion. Paths must be valid scene-tree paths to a node, and must be specified starting from the parent node of the node that will reproduce the animation. To specify a track that controls properties or bones, append its name after the path, separated by <c>":"</c>. For example, <c>"character/skeleton:ankle"</c> or <c>"character/mesh:transform/local"</c>.</para>
+            <para>If the track has type , the transformation will be cancelled visually, and the animation will appear to stay in place.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.AnimationTree.GetRootMotionTransform">
+            <summary>
+            <para>Retrieve the motion of the <see cref="P:Godot.AnimationTree.RootMotionTrack"/> as a <see cref="T:Godot.Transform"/> that can be used elsewhere. If <see cref="P:Godot.AnimationTree.RootMotionTrack"/> is not a path to a track of type , returns an identity transformation.</para>
             </summary>
         </member>
         <member name="M:Godot.AnimationTree.Advance(System.Single)">
@@ -7708,6 +7732,11 @@
             <para>Pitch value. Can range from 0 (-1 octave) to 16 (+16 octaves).</para>
             </summary>
         </member>
+        <member name="T:Godot.AudioEffectRecord">
+            <summary>
+            <para>Allows the user to record sound from a microphone. It sets and gets the format in which the audio file will be recorded (8-bit, 16-bit, or compressed). It checks whether or not the recording is active, and if it is, records the sound. It then returns the recorded sample.</para>
+            </summary>
+        </member>
         <member name="P:Godot.AudioEffectRecord.Format">
             <summary>
             <para>Specifies the format in which the sample will be recorded. See <see cref="T:Godot.AudioStreamSample.FormatEnum"/> for available formats.</para>
@@ -8531,6 +8560,7 @@
         <member name="T:Godot.BakedLightmap">
             <summary>
             <para>Baked lightmaps are an alternative workflow for adding indirect (or baked) lighting to a scene. Unlike the <see cref="T:Godot.GIProbe"/> approach, baked lightmaps work fine on low-end PCs and mobile devices as they consume almost no resources in run-time.</para>
+            <para>Note: This node has many known bugs and will be <a href="https://godotengine.org/article/godot-40-will-get-new-modernized-lightmapper">rewritten for Godot 4.0</a>. See <a href="https://github.com/godotengine/godot/issues/30929">GitHub issue #30929</a>.</para>
             </summary>
         </member>
         <member name="F:Godot.BakedLightmap.BakeQualityEnum.Low">
@@ -8859,11 +8889,6 @@
         <member name="M:Godot.BitmapFont.GetTexture(System.Int32)">
             <summary>
             <para>Returns the font atlas texture at index <c>idx</c>.</para>
-            </summary>
-        </member>
-        <member name="M:Godot.BitmapFont.GetCharSize(System.Int32,System.Int32)">
-            <summary>
-            <para>Returns the size of a character, optionally taking kerning into account if the next character is provided.</para>
             </summary>
         </member>
         <member name="M:Godot.BitmapFont.Clear">
@@ -10354,6 +10379,17 @@
         <member name="P:Godot.CSGTorus.Material">
             <summary>
             <para>The material used to render the torus.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.CSharpScript">
+            <summary>
+            <para>This class represents a C# script. It is the C# equivalent of the <see cref="T:Godot.GDScript"/> class and is only available in Mono-enabled Godot builds.</para>
+            <para>See also <see cref="T:Godot.GodotSharp"/>.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.CSharpScript.New(System.Object[])">
+            <summary>
+            <para>Returns a new instance of the script.</para>
             </summary>
         </member>
         <member name="T:Godot.Camera">
@@ -13978,17 +14014,17 @@
         </member>
         <member name="F:Godot.DirectionalLight.ShadowMode.Orthogonal">
             <summary>
-            <para>Renders the entire scene's shadow map from an orthogonal point of view. May result in blockier shadows on close objects.</para>
+            <para>Renders the entire scene's shadow map from an orthogonal point of view. This is the fastest directional shadow mode. May result in blurrier shadows on close objects.</para>
             </summary>
         </member>
         <member name="F:Godot.DirectionalLight.ShadowMode.Parallel2Splits">
             <summary>
-            <para>Splits the view frustum in 2 areas, each with its own shadow map.</para>
+            <para>Splits the view frustum in 2 areas, each with its own shadow map. This shadow mode is a compromise between  and  in terms of performance.</para>
             </summary>
         </member>
         <member name="F:Godot.DirectionalLight.ShadowMode.Parallel4Splits">
             <summary>
-            <para>Splits the view frustum in 4 areas, each with its own shadow map.</para>
+            <para>Splits the view frustum in 4 areas, each with its own shadow map. This is the slowest directional shadow mode.</para>
             </summary>
         </member>
         <member name="F:Godot.DirectionalLight.ShadowDepthRange.Stable">
@@ -13998,7 +14034,7 @@
         </member>
         <member name="F:Godot.DirectionalLight.ShadowDepthRange.Optimized">
             <summary>
-            <para>Tries to achieve maximum shadow resolution. May result in saw effect on shadow edges.</para>
+            <para>Tries to achieve maximum shadow resolution. May result in saw effect on shadow edges. This mode typically works best in games where the camera will often move at high speeds, such as most racing games.</para>
             </summary>
         </member>
         <member name="P:Godot.DirectionalLight.DirectionalShadowMode">
@@ -14187,7 +14223,7 @@
         </member>
         <member name="P:Godot.DynamicFontData.Antialiased">
             <summary>
-            <para>If <c>true</c>, the font is rendered with anti-aliasing.</para>
+            <para>If <c>true</c>, the font is rendered with anti-aliasing. This property applies both to the main font and its outline (if it has one).</para>
             </summary>
         </member>
         <member name="P:Godot.DynamicFontData.Hinting">
@@ -14218,6 +14254,7 @@
             <para>- Glow</para>
             <para>- Tonemap (Auto Exposure)</para>
             <para>- Adjustments</para>
+            <para>These effects will only apply when the <see cref="T:Godot.Viewport"/>'s intended usage is "3D" or "3D Without Effects". This can be configured for the root Viewport with , or for specific Viewports via the <see cref="P:Godot.Viewport.Usage"/> property.</para>
             </summary>
         </member>
         <member name="F:Godot.Environment.SSAOBlur.Disabled">
@@ -14845,7 +14882,7 @@
         </member>
         <member name="T:Godot.FileDialog">
             <summary>
-            <para>FileDialog is a preset dialog used to choose files and directories in the filesystem. It supports filter masks.</para>
+            <para>FileDialog is a preset dialog used to choose files and directories in the filesystem. It supports filter masks. The FileDialog automatically sets its window title according to the <see cref="P:Godot.FileDialog.Mode"/>. If you want to use a custom title, disable this by setting <see cref="P:Godot.FileDialog.ModeOverridesTitle"/> to <c>false</c>.</para>
             </summary>
         </member>
         <member name="F:Godot.FileDialog.ModeEnum.OpenFile">
@@ -14983,6 +15020,11 @@
         <member name="M:Godot.Font.GetHeight">
             <summary>
             <para>Returns the total font height (ascent plus descent) in pixels.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.Font.GetCharSize(System.Int32,System.Int32)">
+            <summary>
+            <para>Returns the size of a character, optionally taking kerning into account if the next character is provided.</para>
             </summary>
         </member>
         <member name="M:Godot.Font.GetStringSize(System.String)">
@@ -17638,7 +17680,7 @@
         </member>
         <member name="M:Godot.Image.CreateFromData(System.Int32,System.Int32,System.Boolean,Godot.Image.Format,System.Byte[])">
             <summary>
-            <para>Creates a new image of given size and format. See <see cref="T:Godot.Image.Format"/> constants. Fills the image with the given raw data. If <c>use_mipmaps</c> is <c>true</c> then generate mipmaps for this image. See the <see cref="M:Godot.Image.GenerateMipmaps(System.Boolean)"/>.</para>
+            <para>Creates a new image of given size and format. See <see cref="T:Godot.Image.Format"/> constants. Fills the image with the given raw data. If <c>use_mipmaps</c> is <c>true</c> then loads mipmaps for this image from <c>data</c>. See <see cref="M:Godot.Image.GenerateMipmaps(System.Boolean)"/>.</para>
             </summary>
         </member>
         <member name="M:Godot.Image.IsEmpty">
@@ -19076,7 +19118,7 @@
         </member>
         <member name="P:Godot.Joint2D.DisableCollision">
             <summary>
-            <para>If <c>true</c>, <see cref="P:Godot.Joint2D.NodeA"/> and <see cref="P:Godot.Joint2D.NodeB"/> can collide.</para>
+            <para>If <c>true</c>, <see cref="P:Godot.Joint2D.NodeA"/> and <see cref="P:Godot.Joint2D.NodeB"/> can not collide.</para>
             </summary>
         </member>
         <member name="T:Godot.KinematicBody">
@@ -19118,7 +19160,7 @@
             <para>This method should be used in <see cref="M:Godot.Node._PhysicsProcess(System.Single)"/> (or in a method called by <see cref="M:Godot.Node._PhysicsProcess(System.Single)"/>), as it uses the physics step's <c>delta</c> value automatically in calculations. Otherwise, the simulation will run at an incorrect speed.</para>
             <para><c>linear_velocity</c> is the velocity vector (typically meters per second). Unlike in <see cref="M:Godot.KinematicBody.MoveAndCollide(Godot.Vector3,System.Boolean,System.Boolean,System.Boolean)"/>, you should not multiply it by <c>delta</c> — the physics engine handles applying the velocity. </para>
             <para><c>up_direction</c> is the up direction, used to determine what is a wall and what is a floor or a ceiling. If set to the default value of <c>Vector3(0, 0, 0)</c>, everything is considered a wall.</para>
-            <para>If <c>stop_on_slope</c> is <c>true</c>, body will not slide on slopes if you include gravity in <c>linear_velocity</c>.</para>
+            <para>If <c>stop_on_slope</c> is <c>true</c>, body will not slide on slopes when you include gravity in <c>linear_velocity</c> and the body is standing still.</para>
             <para>If the body collides, it will change direction a maximum of <c>max_slides</c> times before it stops.</para>
             <para><c>floor_max_angle</c> is the maximum angle (in radians) where a slope is still considered a floor (or a ceiling), rather than a wall. The default value equals 45 degrees.</para>
             <para>If <c>infinite_inertia</c> is <c>true</c>, body will be able to push <see cref="T:Godot.RigidBody"/> nodes, but it won't also detect any collisions with them. If <c>false</c>, it will interact with <see cref="T:Godot.RigidBody"/> nodes like with <see cref="T:Godot.StaticBody"/>.</para>
@@ -19478,7 +19520,7 @@
         </member>
         <member name="P:Godot.Label.PercentVisible">
             <summary>
-            <para>Limits the count of visible characters. If you set <c>percent_visible</c> to 50, only up to half of the text's characters will display on screen. Useful to animate the text in a dialog box.</para>
+            <para>Limits the amount of visible characters. If you set <c>percent_visible</c> to 0.5, only up to half of the text's characters will display on screen. Useful to animate the text in a dialog box.</para>
             </summary>
         </member>
         <member name="P:Godot.Label.LinesSkipped">
@@ -19559,7 +19601,7 @@
         </member>
         <member name="T:Godot.Light">
             <summary>
-            <para>Light is the abstract base class for light nodes, so it shouldn't be used directly (it can't be instanced). Other types of light nodes inherit from it. Light contains the common variables and parameters used for lighting.</para>
+            <para>Light is the abstract base class for light nodes. As it can't be instanced, it shouldn't be used directly. Other types of light nodes inherit from it. Light contains the common variables and parameters used for lighting.</para>
             </summary>
         </member>
         <member name="F:Godot.Light.BakeMode.Disabled">
@@ -19661,12 +19703,12 @@
         </member>
         <member name="P:Godot.Light.LightColor">
             <summary>
-            <para>The light's color.</para>
+            <para>The light's color. An overbright color can be used to achieve a result equivalent to increasing the light's <see cref="P:Godot.Light.LightEnergy"/>.</para>
             </summary>
         </member>
         <member name="P:Godot.Light.LightEnergy">
             <summary>
-            <para>The light's strength multiplier.</para>
+            <para>The light's strength multiplier (this is not a physical unit). For <see cref="T:Godot.OmniLight"/> and <see cref="T:Godot.SpotLight"/>, changing this value will only change the light color's intensity, not the light's radius.</para>
             </summary>
         </member>
         <member name="P:Godot.Light.LightIndirectEnergy">
@@ -19681,7 +19723,7 @@
         </member>
         <member name="P:Godot.Light.LightSpecular">
             <summary>
-            <para>The intensity of the specular blob in objects affected by the light. At <c>0</c> the light becomes a pure diffuse light.</para>
+            <para>The intensity of the specular blob in objects affected by the light. At <c>0</c>, the light becomes a pure diffuse light. When not baking emission, this can be used to avoid unrealistic reflections when placing lights above an emissive surface.</para>
             </summary>
         </member>
         <member name="P:Godot.Light.LightBakeMode">
@@ -19706,7 +19748,7 @@
         </member>
         <member name="P:Godot.Light.ShadowBias">
             <summary>
-            <para>Used to adjust shadow appearance. Too small a value results in self-shadowing, while too large a value causes shadows to separate from casters. Adjust as needed.</para>
+            <para>Used to adjust shadow appearance. Too small a value results in self-shadowing ("shadow acne"), while too large a value causes shadows to separate from casters ("peter-panning"). Adjust as needed.</para>
             </summary>
         </member>
         <member name="P:Godot.Light.ShadowContact">
@@ -20230,7 +20272,7 @@
         </member>
         <member name="M:Godot.LineEdit.Clear">
             <summary>
-            <para>Erases the <see cref="T:Godot.LineEdit"/> text.</para>
+            <para>Erases the <see cref="T:Godot.LineEdit"/>'s <see cref="P:Godot.LineEdit.Text"/>.</para>
             </summary>
         </member>
         <member name="M:Godot.LineEdit.Select(System.Int32,System.Int32)">
@@ -20257,6 +20299,16 @@
         <member name="M:Godot.LineEdit.AppendAtCursor(System.String)">
             <summary>
             <para>Adds <c>text</c> after the cursor. If the resulting value is longer than <see cref="P:Godot.LineEdit.MaxLength"/>, nothing happens.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.LineEdit.DeleteCharAtCursor">
+            <summary>
+            <para>Deletes one character at the cursor's current position (equivalent to pressing the <c>Delete</c> key).</para>
+            </summary>
+        </member>
+        <member name="M:Godot.LineEdit.DeleteText(System.Int32,System.Int32)">
+            <summary>
+            <para>Deletes a section of the <see cref="P:Godot.LineEdit.Text"/> going from position <c>from_column</c> to <c>to_column</c>. Both parameters should be within the text's length.</para>
             </summary>
         </member>
         <member name="M:Godot.LineEdit.MenuOption(System.Int32)">
@@ -20566,7 +20618,7 @@
         <member name="P:Godot.Material.RenderPriority">
             <summary>
             <para>Sets the render priority for transparent objects in 3D scenes. Higher priority objects will be sorted in front of lower priority objects.</para>
-            <para>Note: this only applies to sorting of transparent objects. This will not impact how transparent objects are sorted relative to opaque objects. This is because opaque objects are sorted based on depth, while transparent objects are sorted from back to front (subject to priority).</para>
+            <para>Note: this only applies to sorting of transparent objects. This will not impact how transparent objects are sorted relative to opaque objects. This is because opaque objects are not sorted, while transparent objects are sorted from back to front (subject to priority).</para>
             </summary>
         </member>
         <member name="P:Godot.Material.NextPass">
@@ -22304,7 +22356,7 @@
         </member>
         <member name="P:Godot.OmniLight.OmniRange">
             <summary>
-            <para>The light's radius.</para>
+            <para>The light's radius. Note that the effectively lit area may appear to be smaller depending on the <see cref="P:Godot.OmniLight.OmniAttenuation"/> in use. No matter the <see cref="P:Godot.OmniLight.OmniAttenuation"/> in use, the light will never reach anything outside this radius.</para>
             </summary>
         </member>
         <member name="P:Godot.OmniLight.OmniAttenuation">
@@ -22974,6 +23026,7 @@
         <member name="P:Godot.Particles.VisibilityAabb">
             <summary>
             <para>The <see cref="T:Godot.AABB"/> that determines the area of the world part of which needs to be visible on screen for the particle system to be active.</para>
+            <para>Note: If the <see cref="T:Godot.ParticlesMaterial"/> in use is configured to cast shadows, you may want to enlarge this AABB to ensure the shadow is updated when particles are off-screen.</para>
             </summary>
         </member>
         <member name="P:Godot.Particles.LocalCoords">
@@ -25250,9 +25303,19 @@
             <para>The body's friction. Values range from <c>0</c> (frictionless) to <c>1</c> (maximum friction).</para>
             </summary>
         </member>
+        <member name="P:Godot.PhysicsMaterial.Rough">
+            <summary>
+            <para>If <c>true</c>, the physics engine will use the friction of the object marked as "rough" when two objects collide. If <c>false</c>, the physics engine will use the lowest friction of all colliding objects instead. If <c>true</c> for both colliding objects, the physics engine will use the highest friction.</para>
+            </summary>
+        </member>
         <member name="P:Godot.PhysicsMaterial.Bounce">
             <summary>
             <para>The body's bounciness. Values range from <c>0</c> (no bounce) to <c>1</c> (full bounciness).</para>
+            </summary>
+        </member>
+        <member name="P:Godot.PhysicsMaterial.Absorbent">
+            <summary>
+            <para>If <c>true</c>, subtracts the bounciness from the colliding object's bounciness instead of adding it.</para>
             </summary>
         </member>
         <member name="T:Godot.PhysicsServer">
@@ -27320,7 +27383,7 @@
         </member>
         <member name="M:Godot.ProjectSettings.SaveCustom(System.String)">
             <summary>
-            <para>Saves the configuration to a custom file.</para>
+            <para>Saves the configuration to a custom file. The file extension must be <c>.godot</c> (to save in text-based <see cref="T:Godot.ConfigFile"/> format) or <c>.binary</c> (to save in binary format).</para>
             </summary>
         </member>
         <member name="T:Godot.ProximityGroup">
@@ -27854,8 +27917,7 @@
             <para><code>
             for result in regex.search_all("d01, d03, d0c, x3f and x42"):
                 print(result.get_string("digit"))
-            # Would print 01 03 3f 42
-            # Note that d0c would not match
+            # Would print 01 03 0 3f 42
             </code></para>
             <para>Note: Godot's regex implementation is based on the <a href="https://www.pcre.org/">PCRE2</a> library. You can view the full pattern reference <a href="https://www.pcre.org/current/doc/html/pcre2pattern.html">here</a>.</para>
             <para>Tip: You can use <a href="https://regexr.com/">Regexr</a> to test regular expressions online.</para>
@@ -27918,7 +27980,7 @@
         </member>
         <member name="P:Godot.RegExMatch.Names">
             <summary>
-            <para>A dictionary of named groups and its corresponding group number. Only groups with that were matched are included. If multiple groups have the same name, that name would refer to the first matching one.</para>
+            <para>A dictionary of named groups and its corresponding group number. Only groups that were matched are included. If multiple groups have the same name, that name would refer to the first matching one.</para>
             </summary>
         </member>
         <member name="P:Godot.RegExMatch.Strings">
@@ -28304,6 +28366,12 @@
             <para>When set, clears the tag stack and adds a raw text tag to the top of it. Does not parse BBCodes. Does not modify <see cref="P:Godot.RichTextLabel.BbcodeText"/>.</para>
             </summary>
         </member>
+        <member name="P:Godot.RichTextLabel.FitContentHeight">
+            <summary>
+            <para>If <c>true</c>, the label's height will be automatically updated to fit its content.</para>
+            <para>Note: This property is used as a workaround to fix issues with <see cref="T:Godot.RichTextLabel"/> in <see cref="T:Godot.Container"/>s, but it's unreliable in some cases and will be removed in future versions.</para>
+            </summary>
+        </member>
         <member name="P:Godot.RichTextLabel.ScrollActive">
             <summary>
             <para>If <c>true</c>, the scrollbar is visible. Setting this to <c>false</c> does not block scrolling completely. See <see cref="M:Godot.RichTextLabel.ScrollToLine(System.Int32)"/>.</para>
@@ -28583,12 +28651,12 @@
         </member>
         <member name="P:Godot.RigidBody.Sleeping">
             <summary>
-            <para>If <c>true</c>, the body is sleeping and will not calculate forces until woken up by a collision or the <c>apply_impulse</c> method.</para>
+            <para>If <c>true</c>, the body will not move and will not calculate forces until woken up by another body through, for example, a collision, or by using the <see cref="M:Godot.RigidBody.ApplyImpulse(Godot.Vector3,Godot.Vector3)"/> or <see cref="M:Godot.RigidBody.AddForce(Godot.Vector3,Godot.Vector3)"/> methods.</para>
             </summary>
         </member>
         <member name="P:Godot.RigidBody.CanSleep">
             <summary>
-            <para>If <c>true</c>, the RigidBody will not calculate forces and will act as a static body while there is no movement. It will wake up when forces are applied through other collisions or when the <c>apply_impulse</c> method is used.</para>
+            <para>If <c>true</c>, the body can enter sleep mode when there is no movement. See <see cref="P:Godot.RigidBody.Sleeping"/>.</para>
             </summary>
         </member>
         <member name="P:Godot.RigidBody.AxisLockLinearX">
@@ -28810,12 +28878,12 @@
         </member>
         <member name="P:Godot.RigidBody2D.Sleeping">
             <summary>
-            <para>If <c>true</c>, the body is sleeping and will not calculate forces until woken up by a collision or by using <see cref="M:Godot.RigidBody2D.ApplyImpulse(Godot.Vector2,Godot.Vector2)"/> or <see cref="M:Godot.RigidBody2D.AddForce(Godot.Vector2,Godot.Vector2)"/>.</para>
+            <para>If <c>true</c>, the body will not move and will not calculate forces until woken up by another body through, for example, a collision, or by using the <see cref="M:Godot.RigidBody2D.ApplyImpulse(Godot.Vector2,Godot.Vector2)"/> or <see cref="M:Godot.RigidBody2D.AddForce(Godot.Vector2,Godot.Vector2)"/> methods.</para>
             </summary>
         </member>
         <member name="P:Godot.RigidBody2D.CanSleep">
             <summary>
-            <para>If <c>true</c>, the body will not calculate forces and will act as a static body if there is no movement. The body will wake up when other forces are applied via collisions or by using <see cref="M:Godot.RigidBody2D.ApplyImpulse(Godot.Vector2,Godot.Vector2)"/> or <see cref="M:Godot.RigidBody2D.AddForce(Godot.Vector2,Godot.Vector2)"/>.</para>
+            <para>If <c>true</c>, the body can enter sleep mode when there is no movement. See <see cref="P:Godot.RigidBody2D.Sleeping"/>.</para>
             </summary>
         </member>
         <member name="P:Godot.RigidBody2D.LinearVelocity">
@@ -29582,6 +29650,11 @@
             <summary>
             <para>Returns a list of the points where this shape would touch another, if a given movement was applied. If there are no collisions the list is empty.</para>
             <para>This method needs the transformation matrix for this shape (<c>local_xform</c>), the movement to test on this shape (<c>local_motion</c>), the shape to check collisions with (<c>with_shape</c>), the transformation matrix of that shape (<c>shape_xform</c>), and the movement to test onto the other object (<c>shape_motion</c>).</para>
+            </summary>
+        </member>
+        <member name="M:Godot.Shape2D.Draw(Godot.RID,Godot.Color)">
+            <summary>
+            <para>Draws a solid shape onto a <see cref="T:Godot.CanvasItem"/> with the <see cref="T:Godot.VisualServer"/> API filled with the specified <c>color</c>. The exact drawing method is specific for each shape and cannot be configured.</para>
             </summary>
         </member>
         <member name="T:Godot.ShortCut">
@@ -31461,7 +31534,7 @@
         </member>
         <member name="P:Godot.SpotLight.SpotRange">
             <summary>
-            <para>The maximal range that can be reached by the spotlight.</para>
+            <para>The maximal range that can be reached by the spotlight. Note that the effectively lit area may appear to be smaller depending on the <see cref="P:Godot.SpotLight.SpotAttenuation"/> in use. No matter the <see cref="P:Godot.SpotLight.SpotAttenuation"/> in use, the light will never reach anything outside this range.</para>
             </summary>
         </member>
         <member name="P:Godot.SpotLight.SpotAttenuation">
@@ -33309,6 +33382,11 @@
             <para>Returns the text of a specific line.</para>
             </summary>
         </member>
+        <member name="M:Godot.TextEdit.SetLine(System.Int32,System.String)">
+            <summary>
+            <para>Sets the text for a specific line.</para>
+            </summary>
+        </member>
         <member name="M:Godot.TextEdit.CursorSetColumn(System.Int32,System.Boolean)">
             <summary>
             <para>Moves the cursor at the specified <c>column</c> index.</para>
@@ -34396,7 +34474,7 @@
         </member>
         <member name="M:Godot.TileMap.GetUsedCellsById(System.Int32)">
             <summary>
-            <para>Returns an array of all cells with the given tile <c>id</c>.</para>
+            <para>Returns an array of all cells with the given tile index specified in <c>id</c>.</para>
             </summary>
         </member>
         <member name="M:Godot.TileMap.GetUsedRect">
@@ -34437,6 +34515,12 @@
             <summary>
             <para>A TileSet is a library of tiles for a <see cref="T:Godot.TileMap"/>. It contains a list of tiles, each consisting of a sprite and optional collision shapes.</para>
             <para>Tiles are referenced by a unique integer ID.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.TileSet._IsTileBound(System.Int32,System.Int32)">
+            <summary>
+            <para>Determines when the auto-tiler should consider two different auto-tile IDs to be bound together.</para>
+            <para>Note: <c>neighbor_id</c> will be <c>-1</c> () when checking a tile against an empty neighbor tile.</para>
             </summary>
         </member>
         <member name="M:Godot.TileSet.CreateTile(System.Int32)">
@@ -35526,7 +35610,7 @@
             tween.start()
             </code></para>
             <para>Many methods require a property name, such as <c>"position"</c> above. You can find the correct property name by hovering over the property in the Inspector. You can also provide the components of a property directly by using <c>"property:component"</c> (eg. <c>position:x</c>), where it would only apply to that particular component.</para>
-            <para>Many of the methods accept <c>trans_type</c> and <c>ease_type</c>. The first accepts an <see cref="T:Godot.Tween.TransitionType"/> constant, and refers to the way the timing of the animation is handled (see <a href="https://easings.net/">easings.net</a> for some examples). The second accepts an <see cref="T:Godot.Tween.EaseType"/> constant, and controls the where <c>trans_type</c> is applied to the interpolation (in the beginning, the end, or both). If you don't know which transition and easing to pick, you can try different <see cref="T:Godot.Tween.TransitionType"/> constants with , and use the one that looks best.</para>
+            <para>Many of the methods accept <c>trans_type</c> and <c>ease_type</c>. The first accepts an <see cref="T:Godot.Tween.TransitionType"/> constant, and refers to the way the timing of the animation is handled (see <a href="https://easings.net/">easings.net</a> for some examples). The second accepts an <see cref="T:Godot.Tween.EaseType"/> constant, and controls where the <c>trans_type</c> is applied to the interpolation (in the beginning, the end, or both). If you don't know which transition and easing to pick, you can try different <see cref="T:Godot.Tween.TransitionType"/> constants with , and use the one that looks best.</para>
             <para><a href="https://raw.githubusercontent.com/godotengine/godot-docs/master/img/tween_cheatsheet.png">Tween easing and transition types cheatsheet</a></para>
             </summary>
         </member>
@@ -36800,6 +36884,7 @@
         <member name="P:Godot.Viewport.Hdr">
             <summary>
             <para>If <c>true</c>, the viewport rendering will receive benefits from High Dynamic Range algorithm. High Dynamic Range allows the viewport to receive values that are outside the 0-1 range. In Godot HDR uses 16 bits, meaning it does not store the full range of a floating point number.</para>
+            <para>Note: Requires <see cref="P:Godot.Viewport.Usage"/> to be set to  or , since HDR is not supported for 2D.</para>
             </summary>
         </member>
         <member name="P:Godot.Viewport.Disable3d">
@@ -37023,6 +37108,7 @@
         <member name="T:Godot.ViewportContainer">
             <summary>
             <para>A <see cref="T:Godot.Container"/> node that holds a <see cref="T:Godot.Viewport"/>, automatically setting its size.</para>
+            <para>Note: Changing a ViewportContainer's <see cref="P:Godot.Control.RectScale"/> will cause its contents to appear distorted. To change its visual size without causing distortion, adjust the node's margins instead (if it's not already in a container).</para>
             </summary>
         </member>
         <member name="P:Godot.ViewportContainer.Stretch">
@@ -39447,6 +39533,11 @@
             <para>Marks the back side of a cubemap.</para>
             </summary>
         </member>
+        <member name="P:Godot.VisualServer.RenderLoopEnabled">
+            <summary>
+            <para>If <c>false</c>, disables rendering completely, but the engine logic is still being processed. You can call <see cref="M:Godot.VisualServer.ForceDraw(System.Boolean,System.Double)"/> to draw a frame even with rendering disabled.</para>
+            </summary>
+        </member>
         <member name="M:Godot.VisualServer.ForceSync">
             <summary>
             <para>Synchronizes threads.</para>
@@ -41328,6 +41419,12 @@
             <para>Sets the default clear color which is used when a specific clear color has not been selected.</para>
             </summary>
         </member>
+        <member name="M:Godot.VisualServer.SetShaderTimeScale(System.Single)">
+            <summary>
+            <para>Sets the scale to apply to the passage of time for the shaders' <c>TIME</c> builtin.</para>
+            <para>The default value is <c>1.0</c>, which means <c>TIME</c> will count the real time as it goes by, without narrowing or stretching it.</para>
+            </summary>
+        </member>
         <member name="M:Godot.VisualServer.HasFeature(Godot.VisualServer.Features)">
             <summary>
             <para>Not yet implemented. Always returns <c>false</c>.</para>
@@ -42041,6 +42138,681 @@
             <para>Returns a free output port ID which can be used in <see cref="M:Godot.VisualShaderNodeGroupBase.AddOutputPort(System.Int32,System.Int32,System.String)"/>.</para>
             </summary>
         </member>
+        <member name="T:Godot.VisualShaderNodeInput">
+            <summary>
+            <para>Gives access to input variables (built-ins) available for the shader. See the shading reference for the list of available built-ins for each shader type (check <c>Tutorials</c> section for link).</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeInput.InputName">
+            <summary>
+            <para>One of the several input constants in lower-case style like: "vertex"(<c>VERTEX</c>) or "point_size"(<c>POINT_SIZE</c>).</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeIs">
+            <summary>
+            <para>Returns the boolean result of the comparison between <c>INF</c> or <c>NaN</c> and a scalar parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeIs.FunctionEnum.Inf">
+            <summary>
+            <para>Comparison with <c>INF</c> (Infinity).</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeIs.FunctionEnum.Nan">
+            <summary>
+            <para>Comparison with <c>NaN</c> (Not a Number; denotes invalid numeric results, e.g. division by zero).</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeIs.Function">
+            <summary>
+            <para>The comparison function. See <see cref="T:Godot.VisualShaderNodeIs.FunctionEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeOuterProduct">
+            <summary>
+            <para><c>OuterProduct</c> treats the first parameter <c>c</c> as a column vector (matrix with one column) and the second parameter <c>r</c> as a row vector (matrix with one row) and does a linear algebraic matrix multiply <c>c * r</c>, yielding a matrix whose number of rows is the number of components in <c>c</c> and whose number of columns is the number of components in <c>r</c>.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeOutput">
+            <summary>
+            <para>This visual shader node is present in all shader graphs in form of "Output" block with mutliple output value ports.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeScalarClamp">
+            <summary>
+            <para>Constrains a value to lie between <c>min</c> and <c>max</c> values.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeScalarDerivativeFunc">
+            <summary>
+            <para>This node is only available in <c>Fragment</c> and <c>Light</c> visual shaders.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeScalarDerivativeFunc.FunctionEnum.Sum">
+            <summary>
+            <para>Sum of absolute derivative in <c>x</c> and <c>y</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeScalarDerivativeFunc.FunctionEnum.X">
+            <summary>
+            <para>Derivative in <c>x</c> using local differencing.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeScalarDerivativeFunc.FunctionEnum.Y">
+            <summary>
+            <para>Derivative in <c>y</c> using local differencing.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeScalarDerivativeFunc.Function">
+            <summary>
+            <para>The derivative type. See <see cref="T:Godot.VisualShaderNodeScalarDerivativeFunc.FunctionEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeScalarInterp">
+            <summary>
+            <para>Translates to <c>mix(a, b, weight)</c> in the shader language.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeScalarSmoothStep">
+            <summary>
+            <para>Translates to <c>smoothstep(edge0, edge1, x)</c> in the shader language.</para>
+            <para>Returns <c>0.0</c> if <c>x</c> is smaller than <c>edge0</c> and <c>1.0</c> if <c>x</c> is larger than <c>edge1</c>. Otherwise the return value is interpolated between <c>0.0</c> and <c>1.0</c> using Hermite polynomials.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeScalarSwitch">
+            <summary>
+            <para>Returns an associated scalar if the provided boolean value is <c>true</c> or <c>false</c>.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeSwitch">
+            <summary>
+            <para>Returns an associated vector if the provided boolean value is <c>true</c> or <c>false</c>.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTexture">
+            <summary>
+            <para>Performs a lookup operation on the provided texture, with support for multiple texture sources to choose from.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.TextureTypeEnum.Data">
+            <summary>
+            <para>No hints are added to the uniform declaration.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.TextureTypeEnum.Color">
+            <summary>
+            <para>Adds <c>hint_albedo</c> as hint to the uniform declaration for proper sRGB to linear conversion.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.TextureTypeEnum.Normalmap">
+            <summary>
+            <para>Adds <c>hint_normal</c> as hint to the uniform declaration, which internally converts the texture for proper usage as normal map.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.SourceEnum.Texture">
+            <summary>
+            <para>Use the texture given as an argument for this function.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.SourceEnum.Screen">
+            <summary>
+            <para>Use the current viewport's texture as the source.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.SourceEnum.Source2dTexture">
+            <summary>
+            <para>Use the texture from this shader's texture built-in (e.g. a texture of a <see cref="T:Godot.Sprite"/>).</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.SourceEnum.Source2dNormal">
+            <summary>
+            <para>Use the texture from this shader's normal map built-in.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.SourceEnum.Depth">
+            <summary>
+            <para>Use the depth texture available for this shader.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTexture.SourceEnum.Port">
+            <summary>
+            <para>Use the texture provided in the input port for this function.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTexture.Source">
+            <summary>
+            <para>Determines the source for the lookup. See <see cref="T:Godot.VisualShaderNodeTexture.SourceEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTexture.Texture">
+            <summary>
+            <para>The source texture, if needed for the selected <see cref="P:Godot.VisualShaderNodeTexture.Source"/>.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTexture.TextureType">
+            <summary>
+            <para>Specifies the type of the texture if <see cref="P:Godot.VisualShaderNodeTexture.Source"/> is set to . See <see cref="T:Godot.VisualShaderNodeTexture.TextureTypeEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTextureUniform">
+            <summary>
+            <para>Performs a lookup operation on the texture provided as a uniform for the shader.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTextureUniform.TextureTypeEnum.Data">
+            <summary>
+            <para>No hints are added to the uniform declaration.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTextureUniform.TextureTypeEnum.Color">
+            <summary>
+            <para>Adds <c>hint_albedo</c> as hint to the uniform declaration for proper sRGB to linear conversion.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTextureUniform.TextureTypeEnum.Normalmap">
+            <summary>
+            <para>Adds <c>hint_normal</c> as hint to the uniform declaration, which internally converts the texture for proper usage as normal map.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTextureUniform.TextureTypeEnum.Aniso">
+            <summary>
+            <para>Adds <c>hint_aniso</c> as hint to the uniform declaration to use for a flowmap.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTextureUniform.ColorDefaultEnum.White">
+            <summary>
+            <para>Defaults to white color.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTextureUniform.ColorDefaultEnum.Black">
+            <summary>
+            <para>Defaults to black color.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTextureUniform.TextureType">
+            <summary>
+            <para>Defines the type of data provided by the source texture. See <see cref="T:Godot.VisualShaderNodeTextureUniform.TextureTypeEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTextureUniform.ColorDefault">
+            <summary>
+            <para>Sets the default color if no texture is assigned to the uniform.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTextureUniformTriplanar">
+            <summary>
+            <para>Performs a lookup operation on the texture provided as a uniform for the shader, with support for triplanar mapping.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTransformCompose">
+            <summary>
+            <para>Creates a 4x4 transform matrix using four vectors of type <c>vec3</c>. Each vector is one row in the matrix and the last column is a <c>vec4(0, 0, 0, 1)</c>.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTransformConstant">
+            <summary>
+            <para>A constant <see cref="T:Godot.Transform"/>, which can be used as an input node.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTransformConstant.Constant">
+            <summary>
+            <para>A <see cref="T:Godot.Transform"/> constant which represents the state of this node.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTransformDecompose">
+            <summary>
+            <para>Takes a 4x4 transform matrix and decomposes it into four <c>vec3</c> values, one from each row of the matrix.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTransformFunc">
+            <summary>
+            <para>Computes an inverse or transpose function on the provided <see cref="T:Godot.Transform"/>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformFunc.FunctionEnum.Inverse">
+            <summary>
+            <para>Perform the inverse operation on the <see cref="T:Godot.Transform"/> matrix.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformFunc.FunctionEnum.Transpose">
+            <summary>
+            <para>Perform the transpose operation on the <see cref="T:Godot.Transform"/> matrix.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTransformFunc.Function">
+            <summary>
+            <para>The function to be computed. See <see cref="T:Godot.VisualShaderNodeTransformFunc.FunctionEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTransformMult">
+            <summary>
+            <para>A multiplication operation on two transforms (4x4 matrices), with support for different multiplication operators.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformMult.OperatorEnum.Axb">
+            <summary>
+            <para>Multiplies transform <c>a</c> by the transform <c>b</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformMult.OperatorEnum.Bxa">
+            <summary>
+            <para>Multiplies transform <c>b</c> by the transform <c>a</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformMult.OperatorEnum.AxbComp">
+            <summary>
+            <para>Performs a component-wise multiplication of transform <c>a</c> by the transform <c>b</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformMult.OperatorEnum.BxaComp">
+            <summary>
+            <para>Performs a component-wise multiplication of transform <c>b</c> by the transform <c>a</c>.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTransformMult.Operator">
+            <summary>
+            <para>The multiplication type to be performed on the transforms. See <see cref="T:Godot.VisualShaderNodeTransformMult.OperatorEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTransformUniform">
+            <summary>
+            <para>Translated to <c>uniform mat4</c> in the shader language.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeTransformVecMult">
+            <summary>
+            <para>A multiplication operation on a transform (4x4 matrix) and a vector, with support for different multiplication operators.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Axb">
+            <summary>
+            <para>Multiplies transform <c>a</c> by the vector <c>b</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Bxa">
+            <summary>
+            <para>Multiplies vector <c>b</c> by the transform <c>a</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Op3x3Axb">
+            <summary>
+            <para>Multiplies transform <c>a</c> by the vector <c>b</c>, skipping the last row and column of the transform.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeTransformVecMult.OperatorEnum.Op3x3Bxa">
+            <summary>
+            <para>Multiplies vector <c>b</c> by the transform <c>a</c>, skipping the last row and column of the transform.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeTransformVecMult.Operator">
+            <summary>
+            <para>The multiplication type to be performed. See <see cref="T:Godot.VisualShaderNodeTransformVecMult.OperatorEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeUniform">
+            <summary>
+            <para>A uniform represents a variable in the shader which is set externally, i.e. from the <see cref="T:Godot.ShaderMaterial"/>. Uniforms are exposed as properties in the <see cref="T:Godot.ShaderMaterial"/> and can be assigned from the inspector or from a script.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeUniform.UniformName">
+            <summary>
+            <para>Name of the uniform, by which it can be accessed through the <see cref="T:Godot.ShaderMaterial"/> properties.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVec3Constant">
+            <summary>
+            <para>A constant <see cref="T:Godot.Vector3"/>, which can be used as an input node.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeVec3Constant.Constant">
+            <summary>
+            <para>A <see cref="T:Godot.Vector3"/> constant which represents the state of this node.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVec3Uniform">
+            <summary>
+            <para>Translated to <c>uniform vec3</c> in the shader language.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorClamp">
+            <summary>
+            <para>Constrains a value to lie between <c>min</c> and <c>max</c> values. The operation is performed on each component of the vector individually.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorCompose">
+            <summary>
+            <para>Creates a <c>vec3</c> using three scalar values that can be provided from separate inputs.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorDecompose">
+            <summary>
+            <para>Takes a <c>vec3</c> and decomposes it into three scalar values that can be used as separate inputs.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorDerivativeFunc">
+            <summary>
+            <para>This node is only available in <c>Fragment</c> and <c>Light</c> visual shaders.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorDerivativeFunc.FunctionEnum.Sum">
+            <summary>
+            <para>Sum of absolute derivative in <c>x</c> and <c>y</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorDerivativeFunc.FunctionEnum.X">
+            <summary>
+            <para>Derivative in <c>x</c> using local differencing.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorDerivativeFunc.FunctionEnum.Y">
+            <summary>
+            <para>Derivative in <c>y</c> using local differencing.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeVectorDerivativeFunc.Function">
+            <summary>
+            <para>A derivative type. See <see cref="T:Godot.VisualShaderNodeVectorDerivativeFunc.FunctionEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorDistance">
+            <summary>
+            <para>Calculates distance from point represented by vector <c>p0</c> to vector <c>p1</c>.</para>
+            <para>Translated to <c>distance(p0, p1)</c> in the shader language.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorFunc">
+            <summary>
+            <para>A visual shader node able to perform different functions using vectors.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Normalize">
+            <summary>
+            <para>Normalizes the vector so that it has a length of <c>1</c> but points in the same direction.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Saturate">
+            <summary>
+            <para>Clamps the value between <c>0.0</c> and <c>1.0</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Negate">
+            <summary>
+            <para>Returns the opposite value of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Reciprocal">
+            <summary>
+            <para>Returns <c>1/vector</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Rgb2hsv">
+            <summary>
+            <para>Converts RGB vector to HSV equivalent.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Hsv2rgb">
+            <summary>
+            <para>Converts HSV vector to RGB equivalent.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Abs">
+            <summary>
+            <para>Returns the absolute value of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Acos">
+            <summary>
+            <para>Returns the arc-cosine of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Acosh">
+            <summary>
+            <para>Returns the inverse hyperbolic cosine of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Asin">
+            <summary>
+            <para>Returns the arc-sine of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Asinh">
+            <summary>
+            <para>Returns the inverse hyperbolic sine of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Atan">
+            <summary>
+            <para>Returns the arc-tangent of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Atanh">
+            <summary>
+            <para>Returns the inverse hyperbolic tangent of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Ceil">
+            <summary>
+            <para>Finds the nearest integer that is greater than or equal to the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Cos">
+            <summary>
+            <para>Returns the cosine of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Cosh">
+            <summary>
+            <para>Returns the hyperbolic cosine of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Degrees">
+            <summary>
+            <para>Converts a quantity in radians to degrees.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Exp">
+            <summary>
+            <para>Base-e Exponential.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Exp2">
+            <summary>
+            <para>Base-2 Exponential.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Floor">
+            <summary>
+            <para>Finds the nearest integer less than or equal to the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Frac">
+            <summary>
+            <para>Computes the fractional part of the argument.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.InverseSqrt">
+            <summary>
+            <para>Returns the inverse of the square root of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Log">
+            <summary>
+            <para>Natural logarithm.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Log2">
+            <summary>
+            <para>Base-2 logarithm.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Radians">
+            <summary>
+            <para>Converts a quantity in degrees to radians.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Round">
+            <summary>
+            <para>Finds the nearest integer to the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Roundeven">
+            <summary>
+            <para>Finds the nearest even integer to the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Sign">
+            <summary>
+            <para>Extracts the sign of the parameter, i.e. returns <c>-1</c> if the parameter is negative, <c>1</c> if it's positive and <c>0</c> otherwise.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Sin">
+            <summary>
+            <para>Returns the sine of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Sinh">
+            <summary>
+            <para>Returns the hyperbolic sine of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Sqrt">
+            <summary>
+            <para>Returns the square root of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Tan">
+            <summary>
+            <para>Returns the tangent of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Tanh">
+            <summary>
+            <para>Returns the hyperbolic tangent of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Trunc">
+            <summary>
+            <para>Returns a value equal to the nearest integer to the parameter whose absolute value is not larger than the absolute value of the parameter.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorFunc.FunctionEnum.Oneminus">
+            <summary>
+            <para>Returns <c>1.0 - vector</c>.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeVectorFunc.Function">
+            <summary>
+            <para>The function to be performed. See <see cref="T:Godot.VisualShaderNodeVectorFunc.FunctionEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorInterp">
+            <summary>
+            <para>Translates to <c>mix(a, b, weight)</c> in the shader language, where <c>weight</c> is a <see cref="T:Godot.Vector3"/> with weights for each component.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorLen">
+            <summary>
+            <para>Translated to <c>length(p0)</c> in the shader language.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorOp">
+            <summary>
+            <para>A visual shader node for use of vector operators. Operates on vector <c>a</c> and vector <c>b</c>.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Add">
+            <summary>
+            <para>Adds two vectors.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Sub">
+            <summary>
+            <para>Subtracts a vector from a vector.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Mul">
+            <summary>
+            <para>Multiplies two vectors.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Div">
+            <summary>
+            <para>Divides vector by vector.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Mod">
+            <summary>
+            <para>Returns the remainder of the two vectors.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Pow">
+            <summary>
+            <para>Returns the value of the first parameter raised to the power of the second, for each component of the vectors.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Max">
+            <summary>
+            <para>Returns the greater of two values, for each component of the vectors.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Min">
+            <summary>
+            <para>Returns the lesser of two values, for each component of the vectors.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Cross">
+            <summary>
+            <para>Calculates the cross product of two vectors.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Atan2">
+            <summary>
+            <para>Returns the arc-tangent of the parameters.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Reflect">
+            <summary>
+            <para>Returns the vector that points in the direction of reflection. <c>a</c> is incident vector and <c>b</c> is the normal vector.</para>
+            </summary>
+        </member>
+        <member name="F:Godot.VisualShaderNodeVectorOp.OperatorEnum.Step">
+            <summary>
+            <para>Vector step operator. Returns <c>0.0</c> if <c>a</c> is smaller than <c>b</c> and <c>1.0</c> otherwise.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.VisualShaderNodeVectorOp.Operator">
+            <summary>
+            <para>The operator to be used. See <see cref="T:Godot.VisualShaderNodeVectorOp.OperatorEnum"/> for options.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorRefract">
+            <summary>
+            <para>Translated to <c>refract(I, N, eta)</c> in the shader language, where <c>I</c> is the incident vector, <c>N</c> is the normal vector and <c>eta</c> is the ratio of the indicies of the refraction.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorScalarMix">
+            <summary>
+            <para>Translates to <c>mix(a, b, weight)</c> in the shader language, where <c>a</c> and <c>b</c> are vectors and <c>weight</c> is a scalar.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorScalarSmoothStep">
+            <summary>
+            <para>Translates to <c>smoothstep(edge0, edge1, x)</c> in the shader language, where <c>x</c> is a scalar.</para>
+            <para>Returns <c>0.0</c> if <c>x</c> is smaller than <c>edge0</c> and <c>1.0</c> if <c>x</c> is larger than <c>edge1</c>. Otherwise the return value is interpolated between <c>0.0</c> and <c>1.0</c> using Hermite polynomials.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorScalarStep">
+            <summary>
+            <para>Translates to <c>step(edge, x)</c> in the shader language.</para>
+            <para>Returns <c>0.0</c> if <c>x</c> is smaller than <c>edge</c> and <c>1.0</c> otherwise.</para>
+            </summary>
+        </member>
+        <member name="T:Godot.VisualShaderNodeVectorSmoothStep">
+            <summary>
+            <para>Translates to <c>smoothstep(edge0, edge1, x)</c> in the shader language, where <c>x</c> is a vector.</para>
+            <para>Returns <c>0.0</c> if <c>x</c> is smaller than <c>edge0</c> and <c>1.0</c> if <c>x</c> is larger than <c>edge1</c>. Otherwise the return value is interpolated between <c>0.0</c> and <c>1.0</c> using Hermite polynomials.</para>
+            </summary>
+        </member>
         <member name="T:Godot.WeakRef">
             <summary>
             <para>A weakref can hold a <see cref="T:Godot.Reference"/>, without contributing to the reference counter. A weakref can be created from an <see cref="T:Godot.Object"/> using <c>@GDScript.weakref</c>. If this object is not a reference, weakref still works, however, it does not have any effect on the object. Weakrefs are useful in cases where multiple classes have variables that refer to each other. Without weakrefs, using these classes could lead to memory leaks, since both references keep each other from being released. Making part of the variables a weakref can prevent this cyclic dependency, and allows the references to be released.</para>
@@ -42281,7 +43053,7 @@
         <member name="M:Godot.WebRTCPeerConnection.SetLocalDescription(System.String,System.String)">
             <summary>
             <para>Sets the SDP description of the local peer. This should be called in response to <c>session_description_created</c>.</para>
-            <para>If <c>type</c> is <c>answer</c> the peer will start emitting <c>ice_candidate_created</c>.</para>
+            <para>After calling this function the peer will start emitting <c>ice_candidate_created</c> (unless an <see cref="T:Godot.Error"/> different from  is returned).</para>
             </summary>
         </member>
         <member name="M:Godot.WebRTCPeerConnection.SetRemoteDescription(System.String,System.String)">
@@ -42549,7 +43321,7 @@
         </member>
         <member name="P:Godot.World.DirectSpaceState">
             <summary>
-            <para>The World's physics direct space state, used for making various queries. Might be used only during <c>_physics_process</c>.</para>
+            <para>Direct access to the world's physics 3D space state. Used for querying current and potential collisions. Must only be accessed from within <c>_physics_process(delta)</c>.</para>
             </summary>
         </member>
         <member name="T:Godot.World2D">
@@ -42569,7 +43341,7 @@
         </member>
         <member name="P:Godot.World2D.DirectSpaceState">
             <summary>
-            <para>The state of this world's physics space. This allows arbitrary querying for collision.</para>
+            <para>Direct access to the world's physics 2D space state. Used for querying current and potential collisions. Must only be accessed from the main thread within <c>_physics_process(delta)</c>.</para>
             </summary>
         </member>
         <member name="T:Godot.WorldEnvironment">
@@ -42966,7 +43738,7 @@
         </member>
         <member name="T:Godot.Engine">
             <summary>
-            <para>The <see cref="T:Godot.Engine"/> class allows you to query and modify the project's run-time parameters, such as frames per second, time scale, and others.</para>
+            <para>The <see cref="T:Godot.Engine"/> singleton allows you to query and modify the project's run-time parameters, such as frames per second, time scale, and others.</para>
             </summary>
         </member>
         <member name="P:Godot.Engine.EditorHint">
@@ -43089,7 +43861,7 @@
         </member>
         <member name="M:Godot.Engine.GetSingleton(System.String)">
             <summary>
-            <para>Returns a global singleton with given <c>name</c>. Often used for plugins, e.g. GodotPayments.</para>
+            <para>Returns a global singleton with given <c>name</c>. Often used for plugins, e.g. <c>GodotPayment</c> on Android.</para>
             </summary>
         </member>
         <member name="T:Godot.File">
@@ -43227,22 +43999,22 @@
         </member>
         <member name="M:Godot.File.Get8">
             <summary>
-            <para>Returns the next 8 bits from the file as an integer.</para>
+            <para>Returns the next 8 bits from the file as an integer. See <see cref="M:Godot.File.Store8(System.Byte)"/> for details on what values can be stored and retrieved this way.</para>
             </summary>
         </member>
         <member name="M:Godot.File.Get16">
             <summary>
-            <para>Returns the next 16 bits from the file as an integer.</para>
+            <para>Returns the next 16 bits from the file as an integer. See <see cref="M:Godot.File.Store16(System.UInt16)"/> for details on what values can be stored and retrieved this way.</para>
             </summary>
         </member>
         <member name="M:Godot.File.Get32">
             <summary>
-            <para>Returns the next 32 bits from the file as an integer.</para>
+            <para>Returns the next 32 bits from the file as an integer. See <see cref="M:Godot.File.Store32(System.UInt32)"/> for details on what values can be stored and retrieved this way.</para>
             </summary>
         </member>
         <member name="M:Godot.File.Get64">
             <summary>
-            <para>Returns the next 64 bits from the file as an integer.</para>
+            <para>Returns the next 64 bits from the file as an integer. See <see cref="M:Godot.File.Store64(System.UInt64)"/> for details on what values can be stored and retrieved this way.</para>
             </summary>
         </member>
         <member name="M:Godot.File.GetFloat">
@@ -43307,19 +44079,40 @@
         <member name="M:Godot.File.Store8(System.Byte)">
             <summary>
             <para>Stores an integer as 8 bits in the file.</para>
-            <para>Note: The <c>value</c> should lie in the interval <c>[0, 255]</c>.</para>
+            <para>Note: The <c>value</c> should lie in the interval <c>[0, 255]</c>. Any other value will overflow and wrap around.</para>
+            <para>To store a signed integer, use <see cref="M:Godot.File.Store64(System.UInt64)"/>, or convert it manually (see <see cref="M:Godot.File.Store16(System.UInt16)"/> for an example).</para>
             </summary>
         </member>
         <member name="M:Godot.File.Store16(System.UInt16)">
             <summary>
             <para>Stores an integer as 16 bits in the file.</para>
-            <para>Note: The <c>value</c> should lie in the interval <c>[0, 2^16 - 1]</c>.</para>
+            <para>Note: The <c>value</c> should lie in the interval <c>[0, 2^16 - 1]</c>. Any other value will overflow and wrap around.</para>
+            <para>To store a signed integer, use <see cref="M:Godot.File.Store64(System.UInt64)"/> or store a signed integer from the interval <c>[-2^15, 2^15 - 1]</c> (i.e. keeping one bit for the signedness) and compute its sign manually when reading. For example:</para>
+            <para><code>
+            const MAX_15B = 1 &lt;&lt; 15
+            const MAX_16B = 1 &lt;&lt; 16
+            
+            func unsigned16_to_signed(unsigned):
+                return (unsigned + MAX_15B) % MAX_16B - MAX_15B
+            
+            func _ready():
+                var f = File.new()
+                f.open("user://file.dat", File.WRITE_READ)
+                f.store_16(-42) # This wraps around and stores 65494 (2^16 - 42).
+                f.store_16(121) # In bounds, will store 121.
+                f.seek(0) # Go back to start to read the stored value.
+                var read1 = f.get_16() # 65494
+                var read2 = f.get_16() # 121
+                var converted1 = unsigned16_to_signed(read1) # -42
+                var converted2 = unsigned16_to_signed(read2) # 121
+            </code></para>
             </summary>
         </member>
         <member name="M:Godot.File.Store32(System.UInt32)">
             <summary>
             <para>Stores an integer as 32 bits in the file.</para>
-            <para>Note: The <c>value</c> should lie in the interval <c>[0, 2^32 - 1]</c>.</para>
+            <para>Note: The <c>value</c> should lie in the interval <c>[0, 2^32 - 1]</c>. Any other value will overflow and wrap around.</para>
+            <para>To store a signed integer, use <see cref="M:Godot.File.Store64(System.UInt64)"/>, or convert it manually (see <see cref="M:Godot.File.Store16(System.UInt16)"/> for an example).</para>
             </summary>
         </member>
         <member name="M:Godot.File.Store64(System.UInt64)">
@@ -43644,24 +44437,52 @@
             <para>Given an array of <see cref="T:Godot.Vector2"/>s representing tiles, builds an atlas. The returned dictionary has two keys: <c>points</c> is a vector of <see cref="T:Godot.Vector2"/> that specifies the positions of each tile, <c>size</c> contains the overall size of the whole atlas as <see cref="T:Godot.Vector2"/>.</para>
             </summary>
         </member>
+        <member name="T:Godot.GodotSharp">
+            <summary>
+            <para>This class is a bridge between Godot and the Mono runtime. It exposes several low-level operations and is only available in Mono-enabled Godot builds.</para>
+            <para>See also <see cref="T:Godot.CSharpScript"/>.</para>
+            </summary>
+        </member>
         <member name="M:Godot.GodotSharp.AttachThread">
             <summary>
-            <para>Attaches the current thread to the mono runtime.</para>
+            <para>Attaches the current thread to the Mono runtime.</para>
             </summary>
         </member>
         <member name="M:Godot.GodotSharp.DetachThread">
             <summary>
-            <para>Detaches the current thread from the mono runtime.</para>
+            <para>Detaches the current thread from the Mono runtime.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.GodotSharp.GetDomainId">
+            <summary>
+            <para>Returns the current MonoDomain ID.</para>
+            <para>Note: The Mono runtime must be initialized for this method to work (use <see cref="M:Godot.GodotSharp.IsRuntimeInitialized"/> to check). If the Mono runtime isn't initialized at the time this method is called, the engine will crash.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.GodotSharp.GetScriptsDomainId">
+            <summary>
+            <para>Returns the scripts MonoDomain's ID. This will be the same MonoDomain ID as <see cref="M:Godot.GodotSharp.GetDomainId"/>, unless the scripts domain isn't loaded.</para>
+            <para>Note: The Mono runtime must be initialized for this method to work (use <see cref="M:Godot.GodotSharp.IsRuntimeInitialized"/> to check). If the Mono runtime isn't initialized at the time this method is called, the engine will crash.</para>
             </summary>
         </member>
         <member name="M:Godot.GodotSharp.IsScriptsDomainLoaded">
             <summary>
-            <para>Returns whether the scripts domain is loaded.</para>
+            <para>Returns <c>true</c> if the scripts domain is loaded, <c>false</c> otherwise.</para>
             </summary>
         </member>
         <member name="M:Godot.GodotSharp.IsDomainFinalizingForUnload(System.Int32)">
             <summary>
-            <para>Returns whether the domain is being finalized.</para>
+            <para>Returns <c>true</c> if the domain is being finalized, <c>false</c> otherwise.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.GodotSharp.IsRuntimeShuttingDown">
+            <summary>
+            <para>Returns <c>true</c> if the Mono runtime is shutting down, <c>false</c> otherwise.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.GodotSharp.IsRuntimeInitialized">
+            <summary>
+            <para>Returns <c>true</c> if the Mono runtime is initialized, <c>false</c> otherwise.</para>
             </summary>
         </member>
         <member name="T:Godot.JSON">
@@ -43943,6 +44764,11 @@
         <member name="F:Godot.OS.Weekday.Saturday">
             <summary>
             <para>Saturday.</para>
+            </summary>
+        </member>
+        <member name="P:Godot.OS.TabletDriver">
+            <summary>
+            <para>The current tablet drvier in use.</para>
             </summary>
         </member>
         <member name="P:Godot.OS.Clipboard">
@@ -44300,7 +45126,7 @@
         </member>
         <member name="M:Godot.OS.GetName">
             <summary>
-            <para>Returns the name of the host OS. Possible values are: <c>"Android"</c>, <c>"Haiku"</c>, <c>"iOS"</c>, <c>"HTML5"</c>, <c>"OSX"</c>, <c>"Server"</c>, <c>"Windows"</c>, <c>"UWP"</c>, <c>"X11"</c>.</para>
+            <para>Returns the name of the host OS. Possible values are: <c>"Android"</c>, <c>"iOS"</c>, <c>"HTML5"</c>, <c>"OSX"</c>, <c>"Server"</c>, <c>"Windows"</c>, <c>"UWP"</c>, <c>"X11"</c>.</para>
             </summary>
         </member>
         <member name="M:Godot.OS.GetCmdlineArgs">
@@ -44411,6 +45237,36 @@
             <summary>
             <para>Returns the model name of the current device.</para>
             <para>Note: This method is implemented on Android and iOS. Returns <c>"GenericDevice"</c> on unsupported platforms.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.OS.KeyboardGetLayoutCount">
+            <summary>
+            <para>Returns the number of keyboard layouts.</para>
+            <para>Note: This method is implemented on Linux, macOS and Windows.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.OS.KeyboardGetCurrentLayout">
+            <summary>
+            <para>Returns active keyboard layout index.</para>
+            <para>Note: This method is implemented on Linux, macOS and Windows.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.OS.KeyboardSetCurrentLayout(System.Int32)">
+            <summary>
+            <para>Sets active keyboard layout.</para>
+            <para>Note: This method is implemented on Linux, macOS and Windows.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.OS.KeyboardGetLayoutLanguage(System.Int32)">
+            <summary>
+            <para>Returns the ISO-639/BCP-47 language code of the keyboard layout at position <c>index</c>.</para>
+            <para>Note: This method is implemented on Linux, macOS and Windows.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.OS.KeyboardGetLayoutName(System.Int32)">
+            <summary>
+            <para>Returns the localized name of the keyboard layout at position <c>index</c>.</para>
+            <para>Note: This method is implemented on Linux, macOS and Windows.</para>
             </summary>
         </member>
         <member name="M:Godot.OS.CanDraw">
@@ -44635,6 +45491,18 @@
             <summary>
             <para>With this function you can get the list of dangerous permissions that have been granted to the Android application.</para>
             <para>Note: This method is implemented on Android.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.OS.GetTabletDriverCount">
+            <summary>
+            <para>Returns the total number of available tablet drivers.</para>
+            <para>Note: This method is implemented on Windows.</para>
+            </summary>
+        </member>
+        <member name="M:Godot.OS.GetTabletDriverName(System.Int32)">
+            <summary>
+            <para>Returns the tablet driver name for the given index.</para>
+            <para>Note: This method is implemented on Windows.</para>
             </summary>
         </member>
         <member name="T:Godot.ResourceSaver">

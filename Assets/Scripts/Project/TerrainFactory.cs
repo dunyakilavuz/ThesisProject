@@ -48,6 +48,9 @@ public class TerrainFactory : Node
 
     void TerrainGenerator()
     {
+    //    GD.Print("\n\n-- Generating Map --"); //Comment when benchmarking
+    //    GD.Print("Seed: " + References.noise.Seed); //Comment when benchmarking
+    //    var watch = System.Diagnostics.Stopwatch.StartNew(); //Comment when benchmarking
         if(References.map == null)
         {
             References.map = new Map();
@@ -61,8 +64,6 @@ public class TerrainFactory : Node
                 chunks.Add(ChunkGenerator(position));
             }
         }
-        GD.Print("\n\n-- Generating Map --\n");
-        GD.Print("Seed: " + References.noise.Seed);
         WaterGenerator();
         ForestGenerator();
         References.map.Init(chunks);
@@ -82,7 +83,8 @@ public class TerrainFactory : Node
                 }
             }
         }
-        GD.Print("-- Completed Generating Map --");
+    //    watch.Stop(); //Comment when benchmarking
+    //    GD.Print("-- Completed Generating Map -- \tElapsed Time: " + watch.ElapsedMilliseconds * 0.001 + " seconds."); //Comment when benchmarking
     }
 
     void TerrainDestroyer()
@@ -105,8 +107,9 @@ public class TerrainFactory : Node
     }
 
     void WaterDestroyer()
-    {
-        water.GetParent().RemoveChild(water);
+    {   
+        if(water != null)
+            water.GetParent().RemoveChild(water);
         water = null;
     }
 

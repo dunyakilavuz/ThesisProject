@@ -5,9 +5,7 @@ public class QuestFactory : Node
     Map map;
     Graph graph;
     List<Quest> quests;
-    List<Region> regionTabuList;
-    int tabuRemoveAfter = 2;
-    int maxIter = 5000;
+    int questIndex = 0;
     
     public override void _Ready()
     {
@@ -21,20 +19,26 @@ public class QuestFactory : Node
 
     public void GenerateQuests()
     {
+//        var watch = System.Diagnostics.Stopwatch.StartNew(); //Comment when benchmarking
         map = References.map;
+
+        if(map == null)
+            return;
+
         graph = map.regionGraph;
+
+        if(graph == null)
+            return;
         
         if(quests == null)
             quests = new List<Quest>();
         
-        int index = 0;
-        while(index < References.questCount)
-        {
-            Quest q = GenerateQuest(graph.RandomPath(), index + 1);
-            quests.Add(q);
-            References.player.AcceptQuest(q);
-            index++;
-        }
+        questIndex++;
+        Quest q = GenerateQuest(graph.RandomPath(false), questIndex);
+        quests.Add(q);
+        References.player.AcceptQuest(q);
+//        watch.Stop(); //Comment when benchmarking
+//        GD.Print(q.ToString("Elapsed Time: " + watch.ElapsedMilliseconds * 0.001 + " seconds.")); //Comment when benchmarking
     }
 
  
@@ -130,6 +134,9 @@ public class QuestFactory : Node
     {
         if(quests != null)
         {
+            if(quests.Count == 0)
+                return false;
+
             bool allCompleted = true;
             for(int i = 0; i < quests.Count; i++)
                 if(!quests[i].Done)
@@ -149,8 +156,10 @@ public class QuestFactory : Node
         
         if(quests == null)
             return;
-
+        
+        questIndex = 0;
         References.player.ClearQuests();
+//        GD.Print("Clear Quests.");  //Comment when benchmarking
         quests.Clear();
     }
 }

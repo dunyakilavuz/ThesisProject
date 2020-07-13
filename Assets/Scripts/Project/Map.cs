@@ -51,41 +51,35 @@ public class Map : Spatial
         int regionSize = References.regionSize;
         int mapSize = References.chunkAmount;
         regions = new Region[regionSize];
+        List<Vector2> availableCells = new List<Vector2>();
 
         /*Select random cells as region start points.*/
+        for(int i = 0; i < mapSize; i++)
+        {
+            for(int j = 0; j < mapSize; j++)
+            {
+                if(grid[i,j] == -1)
+                {
+                    availableCells.Add(new Vector2(i,j));
+                }
+            }
+        }
+        int maxIndex = regionSize;
+        if(regionSize > availableCells.Count)
+        {
+            GD.Print("Region size is larger than availableCells, creating " +  availableCells.Count + " regions.");
+            maxIndex = availableCells.Count;
+        }
+
         Vector2[] regionPositions = new Vector2[regionSize];
-        int u = 0;
-        for(int i = 0; i < mapSize; i++)
-        {
-            for(int j = 0; j < mapSize; j++)
-            {
-                if(grid[i,j] == -1)
-                {
-                    regionPositions[u] = new Vector2(i,j);
-                    u++;
 
-                    if(u >= regionSize)
-                        break;
-                }
-            }
-            if(u >= regionSize)
-                break;
-        }
-
-        for(int i = 0; i < mapSize; i++)
+        for(int i = 0; i < maxIndex; i++)
         {
-            for(int j = 0; j < mapSize; j++)
-            {
-                if(grid[i,j] == -1)
-                {
-                    int rnd = Maths.RandomInt(0,mapSize);
-                    if(rnd < regionSize)
-                    {
-                        regionPositions[rnd] = new Vector2(i,j);
-                    }
-                }
-            }
+            int rnd = Maths.random.Next(availableCells.Count);
+            regionPositions[i] = availableCells[rnd];
+            availableCells.RemoveAt(rnd);
         }
+        availableCells.Clear();
 
         for(int i = 0; i < regionSize; i++)
         {
@@ -94,14 +88,18 @@ public class Map : Spatial
             Vector2 pos = regionPositions[i];
             grid[(int)pos.x,(int)pos.y] = region.number;
         }
-
+        
         /*Spread of the regions*/
 
         bool regionSpread;
+        bool spreadContinues = true;
         int l = 0;
+//        GD.Print("Iteration: " + l);
+//        printGrid(grid);
 
-        while(l < regionSize * 5)
+        while(spreadContinues)
         {
+            spreadContinues = false;
             for(int k = 0; k < regionSize; k++)
             {
                 regionSpread = false;
@@ -124,16 +122,19 @@ public class Map : Spatial
                     }
                     if(regionSpread == true)
                     {
+                        spreadContinues = true;
                         regionSpread = false;
                         break;
                     }
                 }
             }
             l++;
+//            GD.Print("Iteration: " + l);
+//            printGrid(grid);
         }
 
         /*Print Results*/
-        printGrid(grid);
+//        printGrid(grid);  //Comment when benchmarking
     }
 
     void GenerateGraph()
@@ -213,7 +214,7 @@ public class Map : Spatial
             }
         }        
 
-        regionGraph.PrintGraph();
+//        regionGraph.PrintGraph(); //Comment when benchmarking
     }
 
     Vector2 checkNeighbors(int i, int j, int[,] map)

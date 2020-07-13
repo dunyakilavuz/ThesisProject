@@ -107,7 +107,7 @@ public class Quest
             return false;
     }
 
-    public override string ToString()
+    public string ToString(string timeElapsed = "")
     {
         string str = "--- Quest " + identifier + " ---\n";
         str += "Path: {";
@@ -133,7 +133,7 @@ public class Quest
             else
                 str += "";
         }
-
+        str += "\n--------------" + timeElapsed;
         return str;
     }
 

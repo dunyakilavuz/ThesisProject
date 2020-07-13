@@ -75,7 +75,7 @@ public class Graph
         return true;
     }
 
-    public GraphVertex[] RandomPath()
+    public GraphVertex[] RandomPath(bool astar = true)
     {
         List<GraphVertex> vertexPool = new List<GraphVertex>();
         GraphVertex A = null;
@@ -98,7 +98,11 @@ public class Graph
             vertexPool.RemoveAt(rnd);
             rnd = Maths.random.Next(vertexPool.Count);
             B = vertexPool[rnd];
-            path = this.Path(A,B);
+
+            if(astar)
+                path = this.PathAstar(A,B);
+            else
+                path = this.PathDijkstra(A,B);
 
             if(path != null)
             {
@@ -166,7 +170,7 @@ public class Graph
         return null;
     }
 
-    public List<GraphVertex> Path(GraphVertex A, GraphVertex B)
+    public List<GraphVertex> PathAstar(GraphVertex A, GraphVertex B)
     {
         GraphVertex vert = AStar(A,B);
 
@@ -191,9 +195,84 @@ public class Graph
         return path;
     }
 
+    int[] Dijkstra(GraphVertex source)
+    {
+        List<GraphVertex> verts = new List<GraphVertex>();
+        GraphVertex current = null;
+        int[] distance = new int[vertices.Count];
+
+        for(int i  = 0; i < vertices.Count; i++)
+        {
+            distance[i] = int.MaxValue;
+            vertices[i].prev = null;
+            verts.Add(vertices[i]);
+        }
+        distance[source.Region.number] = 0;
+
+        while(verts.Count > 0)
+        {
+            int min = int.MaxValue;
+            int index = -1;
+            for(int i = 0; i < verts.Count; i++)
+            {
+                if(distance[verts[i].Region.number] <= min)
+                {
+                    min = distance[verts[i].Region.number];
+                    index = i;
+                }
+            }
+            current = verts[index];
+            verts.RemoveAt(index);
+            List<GraphVertex> neighbors = Neighbors(current);
+
+            for(int i = 0; i < neighbors.Count; i++)
+            {
+                if(verts.Contains(neighbors[i]))
+                {
+                    int newDistance = distance[current.Region.number] + 1;
+                    if(newDistance < distance[neighbors[i].Region.number])
+                    {
+                        distance[neighbors[i].Region.number] = newDistance;
+                        neighbors[i].prev = current;
+                    }
+                }
+            }
+        }
+
+        return distance;
+    }
+
+    
+    public List<GraphVertex> PathDijkstra(GraphVertex A, GraphVertex B)
+    {
+        int[] distance = Dijkstra(A);
+
+        if(distance[B.Region.number] == int.MaxValue)
+            return null;
+
+        List<GraphVertex> path = new List<GraphVertex>();
+        GraphVertex current = B;
+
+        while(true)
+        {
+            path.Add(current);
+
+            if(current.prev != null)
+                current = current.prev;
+            else
+                break;
+        }
+        path.Reverse();
+        return path;
+    }
+
+
     List<GraphVertex> Neighbors(GraphVertex A)
     {
         List<GraphVertex> neighbors = new List<GraphVertex>();
+
+        if(edges == null)
+            return null;
 
         for(int i = 0; i < edges.Count; i++)
         {
@@ -359,24 +438,5 @@ public class Graph
         }
         text += "}";
         GD.Print(text);
-
-        GraphVertex mostConnected = MostConnected();
-        GraphVertex leastConnected = LeastConnected();
-        GraphVertex disconnected = Disconnected();
-
-        if(mostConnected != null)
-            GD.Print("Most Connected Node: " + mostConnected.Region.number);
-        else
-            GD.Print("No most connected node found.");
-
-        if(leastConnected != null)
-            GD.Print("Least Connected Node: " + leastConnected.Region.number);
-        else
-            GD.Print("No least connected node found.");
-
-        if(disconnected != null)
-            GD.Print("Disconnected Node: " + disconnected.Region.number);
-        else
-            GD.Print("No disconnected node found.");
     }
 }

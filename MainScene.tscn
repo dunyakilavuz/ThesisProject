@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Assets/Scripts/Project/References.cs" type="Script" id=1]
 [ext_resource path="res://Assets/Scripts/Project/Player.cs" type="Script" id=2]
@@ -7,52 +7,70 @@
 [ext_resource path="res://Assets/Scripts/Project/UIManager.cs" type="Script" id=5]
 [ext_resource path="res://Assets/Scripts/Project/TerrainFactory.cs" type="Script" id=6]
 
-[sub_resource type="BoxShape" id=1]
+[sub_resource type="OpenSimplexNoise" id=1]
+seed = 141407
+period = 100.0
+
+[sub_resource type="NoiseTexture" id=2]
+noise = SubResource( 1 )
+
+[sub_resource type="BoxShape" id=3]
 extents = Vector3( 1, 1.06236, 1.0284 )
-
-[sub_resource type="CubeMesh" id=2]
-
-[sub_resource type="SpatialMaterial" id=3]
 
 [sub_resource type="CubeMesh" id=4]
 
 [sub_resource type="SpatialMaterial" id=5]
+
+[sub_resource type="CubeMesh" id=6]
+
+[sub_resource type="SpatialMaterial" id=7]
 albedo_color = Color( 0.984314, 0.0196078, 0.0196078, 1 )
 
-[sub_resource type="ProceduralSky" id=6]
+[sub_resource type="ProceduralSky" id=8]
 sky_top_color = Color( 0.117647, 0.662745, 0.960784, 1 )
 sky_horizon_color = Color( 0.996078, 0.996078, 0.996078, 1 )
 ground_bottom_color = Color( 0.321569, 0.321569, 0.321569, 1 )
 ground_horizon_color = Color( 0.462745, 0.666667, 0.803922, 1 )
 
-[sub_resource type="Environment" id=7]
+[sub_resource type="Environment" id=9]
 background_mode = 2
-background_sky = SubResource( 6 )
-
-[sub_resource type="StyleBoxFlat" id=8]
-bg_color = Color( 0.180392, 0.168627, 0.168627, 1 )
-
-[sub_resource type="StyleBoxFlat" id=9]
-bg_color = Color( 0.0745098, 0.627451, 0.956863, 1 )
+background_sky = SubResource( 8 )
 
 [sub_resource type="StyleBoxFlat" id=10]
-bg_color = Color( 0.0745098, 0.545098, 0.956863, 1 )
+bg_color = Color( 0.180392, 0.168627, 0.168627, 1 )
 
 [sub_resource type="StyleBoxFlat" id=11]
-bg_color = Color( 0.282353, 0.282353, 0.282353, 1 )
+bg_color = Color( 0.0745098, 0.627451, 0.956863, 1 )
 
 [sub_resource type="StyleBoxFlat" id=12]
-bg_color = Color( 0.117647, 0.615686, 0.913725, 1 )
+bg_color = Color( 0.0745098, 0.545098, 0.956863, 1 )
 
 [sub_resource type="StyleBoxFlat" id=13]
-bg_color = Color( 0.262745, 0.486275, 0.776471, 1 )
+bg_color = Color( 0.282353, 0.282353, 0.282353, 1 )
 
 [sub_resource type="StyleBoxFlat" id=14]
+bg_color = Color( 0.117647, 0.615686, 0.913725, 1 )
+
+[sub_resource type="StyleBoxFlat" id=15]
+bg_color = Color( 0.262745, 0.486275, 0.776471, 1 )
+
+[sub_resource type="StyleBoxFlat" id=16]
 bg_color = Color( 0.2, 0.2, 0.2, 1 )
 
 [node name="MainScene" type="Node"]
 
 [node name="Main" type="Node" parent="."]
+
+[node name="NoiseTexture" type="TextureRect" parent="Main"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = 98.0
+margin_right = 610.0
+margin_bottom = 512.0
+texture = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="References" type="Node" parent="Main"]
 script = ExtResource( 1 )
@@ -69,26 +87,27 @@ script = ExtResource( 3 )
 [node name="World" type="Spatial" parent="."]
 
 [node name="Player" type="KinematicBody" parent="World"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0 )
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 150, 0 )
+visible = false
 script = ExtResource( 2 )
 
 [node name="Collider" type="CollisionShape" parent="World/Player"]
-shape = SubResource( 1 )
+shape = SubResource( 3 )
 
 [node name="Body" type="MeshInstance" parent="World/Player"]
-mesh = SubResource( 2 )
-material/0 = SubResource( 3 )
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
 
 [node name="Nose" type="MeshInstance" parent="World/Player"]
 transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, -1.24371 )
-mesh = SubResource( 4 )
-material/0 = SubResource( 5 )
+mesh = SubResource( 6 )
+material/0 = SubResource( 7 )
 
 [node name="CamHolder" type="Spatial" parent="World/Player"]
 script = ExtResource( 4 )
 
 [node name="Camera" type="Camera" parent="World/Player/CamHolder"]
-transform = Transform( 1, 0, 0, 0, 0.940733, 0.339148, 0, -0.339148, 0.940733, 0, 6.42457, 11.167 )
+size = 350.0
 far = 8192.0
 
 [node name="DirectionalLight" type="DirectionalLight" parent="World"]
@@ -96,7 +115,7 @@ transform = Transform( 0.538138, 0.556872, 0.632693, 0, -0.750653, 0.660696, 0.8
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="World"]
-environment = SubResource( 7 )
+environment = SubResource( 9 )
 
 [node name="UI" type="Control" parent="."]
 anchor_right = 1.0
@@ -114,14 +133,12 @@ __meta__ = {
 
 [node name="SeedLabel" type="RichTextLabel" parent="UI/SettingsPanel"]
 margin_left = 1.0
-margin_top = 5.0
+margin_top = 21.0
 margin_right = 152.0
 margin_bottom = 40.0
 bbcode_enabled = true
-bbcode_text = "[center]Seed
-(Empty = Random)"
-text = "Seed
-(Empty = Random)"
+bbcode_text = "[center]Seed"
+text = "Seed"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -132,6 +149,7 @@ margin_right = 153.0
 margin_bottom = 61.0
 focus_mode = 1
 align = 1
+editable = false
 shortcut_keys_enabled = false
 selecting_enabled = false
 __meta__ = {
@@ -234,32 +252,7 @@ margin_top = 254.0
 margin_right = 153.0
 margin_bottom = 278.0
 focus_mode = 1
-text = "8"
-align = 1
-shortcut_keys_enabled = false
-selecting_enabled = false
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Quests" type="RichTextLabel" parent="UI/SettingsPanel"]
-margin_left = 1.0
-margin_top = 280.0
-margin_right = 152.0
-margin_bottom = 300.0
-bbcode_enabled = true
-bbcode_text = "[center]Quest Count"
-text = "Quest Count"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="QuestsLine" type="LineEdit" parent="UI/SettingsPanel"]
-margin_top = 300.0
-margin_right = 153.0
-margin_bottom = 324.0
-focus_mode = 1
-text = "2"
+text = "5"
 align = 1
 shortcut_keys_enabled = false
 selecting_enabled = false
@@ -268,10 +261,11 @@ __meta__ = {
 }
 
 [node name="TerrainButton" type="CheckButton" parent="UI/SettingsPanel"]
-margin_top = 387.0
+margin_top = 327.0
 margin_right = 153.0
-margin_bottom = 427.0
-focus_mode = 1
+margin_bottom = 367.0
+focus_mode = 0
+enabled_focus_mode = 0
 text = "Terrain"
 align = 1
 __meta__ = {
@@ -279,22 +273,37 @@ __meta__ = {
 }
 
 [node name="BordersButton" type="CheckButton" parent="UI/SettingsPanel"]
-margin_top = 427.0
+margin_top = 367.0
 margin_right = 153.0
-margin_bottom = 467.0
-focus_mode = 1
+margin_bottom = 407.0
+focus_mode = 0
+enabled_focus_mode = 0
 text = "Borders"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="QuestsButton" type="CheckButton" parent="UI/SettingsPanel"]
-margin_top = 466.0
-margin_right = 153.0
-margin_bottom = 506.0
-text = "Quests"
-align = 1
+[node name="GenerateQuest" type="Button" parent="UI/SettingsPanel"]
+margin_left = 2.0
+margin_top = 415.0
+margin_right = 152.0
+margin_bottom = 455.0
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Generate Quest"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ClearQuests" type="Button" parent="UI/SettingsPanel"]
+margin_left = 2.0
+margin_top = 465.0
+margin_right = 152.0
+margin_bottom = 505.0
+focus_mode = 0
+enabled_focus_mode = 0
+text = "Clear Quests"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -367,7 +376,7 @@ __meta__ = {
 margin_top = 119.0
 margin_right = 169.0
 margin_bottom = 335.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 10 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -395,10 +404,10 @@ __meta__ = {
 margin_top = 185.0
 margin_right = 169.0
 margin_bottom = 216.0
-custom_styles/hover = SubResource( 9 )
-custom_styles/pressed = SubResource( 10 )
-custom_styles/disabled = SubResource( 11 )
-custom_styles/normal = SubResource( 12 )
+custom_styles/hover = SubResource( 11 )
+custom_styles/pressed = SubResource( 12 )
+custom_styles/disabled = SubResource( 13 )
+custom_styles/normal = SubResource( 14 )
 custom_colors/font_color_disabled = Color( 1, 1, 1, 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 disabled = true
@@ -422,7 +431,7 @@ __meta__ = {
 margin_top = 389.0
 margin_right = 169.0
 margin_bottom = 599.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 10 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -443,8 +452,8 @@ __meta__ = {
 margin_top = 16.0
 margin_right = 168.0
 margin_bottom = 31.0
-custom_styles/fg = SubResource( 13 )
-custom_styles/bg = SubResource( 14 )
+custom_styles/fg = SubResource( 15 )
+custom_styles/bg = SubResource( 16 )
 max_value = 10.0
 percent_visible = false
 __meta__ = {
@@ -467,8 +476,8 @@ __meta__ = {
 margin_top = 46.0
 margin_right = 168.0
 margin_bottom = 61.0
-custom_styles/fg = SubResource( 13 )
-custom_styles/bg = SubResource( 14 )
+custom_styles/fg = SubResource( 15 )
+custom_styles/bg = SubResource( 16 )
 max_value = 10.0
 percent_visible = false
 __meta__ = {
@@ -492,8 +501,8 @@ margin_left = 0.237793
 margin_top = 76.0
 margin_right = 168.238
 margin_bottom = 91.0
-custom_styles/fg = SubResource( 13 )
-custom_styles/bg = SubResource( 14 )
+custom_styles/fg = SubResource( 15 )
+custom_styles/bg = SubResource( 16 )
 max_value = 10.0
 percent_visible = false
 __meta__ = {
@@ -516,8 +525,8 @@ __meta__ = {
 margin_top = 106.0
 margin_right = 168.0
 margin_bottom = 121.0
-custom_styles/fg = SubResource( 13 )
-custom_styles/bg = SubResource( 14 )
+custom_styles/fg = SubResource( 15 )
+custom_styles/bg = SubResource( 16 )
 max_value = 10.0
 percent_visible = false
 __meta__ = {
@@ -540,8 +549,8 @@ __meta__ = {
 margin_top = 136.0
 margin_right = 168.0
 margin_bottom = 151.0
-custom_styles/fg = SubResource( 13 )
-custom_styles/bg = SubResource( 14 )
+custom_styles/fg = SubResource( 15 )
+custom_styles/bg = SubResource( 16 )
 max_value = 10.0
 percent_visible = false
 __meta__ = {
@@ -564,8 +573,8 @@ __meta__ = {
 margin_top = 166.0
 margin_right = 168.0
 margin_bottom = 181.0
-custom_styles/fg = SubResource( 13 )
-custom_styles/bg = SubResource( 14 )
+custom_styles/fg = SubResource( 15 )
+custom_styles/bg = SubResource( 16 )
 max_value = 10.0
 percent_visible = false
 __meta__ = {
@@ -588,8 +597,8 @@ __meta__ = {
 margin_top = 196.0
 margin_right = 168.0
 margin_bottom = 211.0
-custom_styles/fg = SubResource( 13 )
-custom_styles/bg = SubResource( 14 )
+custom_styles/fg = SubResource( 15 )
+custom_styles/bg = SubResource( 16 )
 max_value = 10.0
 percent_visible = false
 __meta__ = {
@@ -597,5 +606,6 @@ __meta__ = {
 }
 [connection signal="toggled" from="UI/SettingsPanel/TerrainButton" to="Main/UIManager" method="ToggleTerrain"]
 [connection signal="toggled" from="UI/SettingsPanel/BordersButton" to="Main/UIManager" method="ToggleBorders"]
-[connection signal="toggled" from="UI/SettingsPanel/QuestsButton" to="Main/UIManager" method="ToggleQuests"]
+[connection signal="button_up" from="UI/SettingsPanel/GenerateQuest" to="Main/QuestFactory" method="GenerateQuests"]
+[connection signal="button_up" from="UI/SettingsPanel/ClearQuests" to="Main/QuestFactory" method="ClearQuests"]
 [connection signal="button_up" from="UI/InfoPanel/QuestPanel/CompleteObjectiveButton" to="World/Player" method="CompleteObjective"]
